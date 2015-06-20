@@ -1,0 +1,186 @@
+%% This is an example first chapter.  You should put chapter/appendix that you
+%% write into a separate file, and add a line \include{yourfilename} to
+%% main.tex, where `yourfilename.tex' is the name of the chapter/appendix file.
+%% You can process specific files by typing their names in at the 
+%% \files=
+%% prompt when you run the file main.tex through LaTeX.
+
+\chapter{Results and Discussion}
+\section{Introduction}
+
+In this chapter the results achieved with this method is discussed. The algorithm is applied to  various binary classification problem and resulting plots and tables are shown. For plotting topoplot function from eeglab toolbox~\cite{30} is used. A comparison of this algorithm with CSP is also given. A modification of this method with another regularization term is also given.
+
+The data set from BCI completion IV dataset $2a$~\cite{31} and dataset $1$ of BCI competition III~\cite{32} is used. The data set consists of motor imagery EEG data from $9$ subjects and ECoG recording from $1$ subject respectively. The dataset description of respective data sets is given below.
+  
+\section{Dataset Description}
+\subsection{BCI Competition IV Dataset 4a}
+
+The cue-based BCI paradigm consisted of four different motor imagery tasks, namely the imagination of movement of the left hand (class 1), right hand (class 2), both feet (class 3), and tongue (class 4). Two sessions on different days were recorded for each subject. Each session is comprised of $6$ runs separated by short breaks. One run consists of $48$ trials ($12$ for each of the four possible classes), yielding a total of $288$ trials per session.
+
+The subjects were sitting in a comfortable armchair in front of a computer screen. At the beginning of a trial $(t = 0 s)$, a fixation cross appeared on the black screen. In addition, a short acoustic warning tone was presented. After two seconds $(t = 2 s)$, a cue in the form of an arrow pointing either to the left, right, down or up (corresponding to one of the four classes left hand, right hand, foot or tongue) appeared and stayed on the screen for $1.25 s$. This prompted the subjects to perform the desired motor imagery task. No feedback was provided. The subjects were asked to carry out the motor imagery task until the fixation cross disappeared from the screen at $t = 6 s$. A short break followed where the screen was black again. The paradigm is illustrated in Fig.~\ref{akb1}.
+   \begin{figure}[hbtp]
+\centering
+\includegraphics[scale=1]{Figure1/akb1.png}
+\caption{Timing scheme of the BCI paradigm}
+\label{akb1}
+\end{figure}
+
+
+Twenty-two Ag/AgCl electrodes (with inter-electrode distances of $3.5 cm$) were used to record the EEG; the montage is shown in Fig.~\ref{akb2}. All signals were recorded monopolarly with the left mastoid serving as reference and the right mastoid as ground. The signals were sampled with $250$ Hz and band pass-filtered between $0.5$ Hz and $100$ Hz. The sensitivity of the amplifier was set to $100$ $ \mu V $. 
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.7]{Figure1/akb2.png}
+\caption{Electrode Positions}
+\label{akb2}
+\end{figure}
+
+An additional $50$ Hz notch filter was enabled to suppress line noise. In addition to the $22$ EEG channels, $3$ monopolar EOG channels were recorded and also sampled with $250$ Hz (see Fig.~\ref{akb2}). They were band pass filtered between $0.5$ Hz and $100$ Hz (with the $50$ Hz notch filter enabled), and the sensitivity of the amplifier was set to $1$ mV. The EOG channels are provided for the subsequent application of artifact processing methods.
+   
+\subsection{BCI Competition III Dataset 1}
+
+During the BCI experiment, a subject had to perform imagined movements of either the left small finger or the tongue. The time series of the electrical brain activity was picked up during these trials using a $8 \times 8 $ ECoG platinum electrode grid which was placed on the contra lateral (right) motor cortex. The grid was assumed to cover the right motor cortex completely, but due to its size (approx. $ 8\times 8 $cm) it partly covered also surrounding cortex areas. All recordings were performed with a sampling rate of $1000$ Hz. After amplification the recorded potentials were stored as microvolt values. Every trial consisted of either an imagined tongue or an imagined finger movement and was recorded for $3$ seconds duration. To avoid visually evoked potentials being reflected by the data, the recording intervals started $0.5$ seconds after the visual cue had ended. The test and training data were taken with one week gap.
+
+\section{Signal Pre-processing and Predictor Model}
+
+The dataset $2a$ is $4$ class classification problem with trials corrupted by EOG artifacts. The data set consists of motor imagery EEG data from $9$ subjects. Data set IIa, from BCI competition IV comprises EEG signals from 9 subjects who performed left hand, right hand, foot and tongue motor imagery. EEG signals were recorded using 22 electrodes. But here we focus on binary classification. All the pair wise combination of the performed classes produced 6 ($4C_2$ combinations) datasets per subject with $144$ trials per class, so a total of $6\times 9\times 144  $ trials for training. The numbers of trials for testing were also same. The ECoG data set consists of $278$ training trials and $100$ testing trials, each trials were 3 seconds long. The ECoG data set filtering was done using filtfilt command in matlab, because it avoids start-up transients. For the dataset $2a$ the signal is band-pass filtered at $7-30$ Hz using a butterworth filter and the interval $500-3500$ ms after the appearance of visual cue is cut out from the continuous EEG signal. Here a trial is $ S\in R^{C\times T} $ where $C$ is the number of electrodes and $T$ is the number of sampled time points. Both datasets were down sampled to $100$ Hz for subsequent processing. The input matrix $X$ is defined as $ X=SS^{T} $ where $X$ is the channel covariance matrix. Input data $S$ was not normalized, because it reduced performance. For dataset $2a$ all the $22$ channels were filtered with RLS filter~\cite{33} using the $3$ additional EOG channels provided. Only $22$ channels were used for the testing and training purpose. Since the number of channel is only $22$ the algorithm works faster. For ECoG data all the $64$ channels were used. The logistic predictor model is used here, since the problem is binary as given by Eqn.~\ref{eq46}, thus the decoding is carried out by simply taking the sign of the detector function as in Eqn.~\ref{decod} .
+
+\begin{equation}
+  \hat{y}  = \left\{ 
+  \begin{array}{l l}
+    +1  & \quad \text{if $ f_{\theta}(S)\geq 0 $}\\
+    -1 & \quad \text{if $ f_{\theta}(S)< 0 $}
+  \end{array} \right.
+  \label{decod}
+\end{equation}
+  For the learning of the detector function the logistic loss function (Eqn.~\ref{eq48}) was used in Eqn.~\ref{eq44}. For the detector function we use a single second order detector working on complete alpha and beta band $7-30$ Hz and two other second order detectors each working on alpha $7-15$ Hz and beta band $15-30$ Hz separately. Since splitting into more bands gave poor results it was not used in subsequent analysis. The second-order term is band-pass filtered at $7-30$ Hz and pre-processed with a spatial whitening matrix $\sum^{s-\frac{1}{2}}$ i.e., X= $\sum^{s-\frac{1}{2}}cov(S^{BP})\sum^{s-\frac{1}{2}}$. A dual spectral regularizer is used with it. $\sum^{s}$ indicates average of covariance matrices. Our aim is to simultaneously learn and select few informative spatio-temporal filters in a systematic manner. We used $ 2\times 10 $ fold cross-validation for the selection of the regularization constant.
+  
+\section{Results}
+The result of this signal analysis framework applied to the motor imagery datasets are given below. The table shows classification accuracy (in percentage) of test data of BCI competition dataset $2a$ for DS regularizer. The first column in table~\ref{akb1} shows the subject label and first row shows the combination of $2$ different motor imagery tasks. $1, 2, 3, 4$ indicates left hand, right hand, foot and tongue motor imagery respectively, choosing a binary class from 4 class resulted in six combinations. For some subjects low rank $(<3)$ weight matrix performs best and for some high rank structure is required for good prediction. The model is chosen using cross validation on training data.
+
+\begin{table}[hbtp]
+ \caption {Result for Dataset 2a}
+ \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    ~  & [1 2] & [1 3] & [1 4] & [2 3] & [2 4] & [3 4] \\ \hline
+    A1 & 86.81 & 85.42 & 99.31 & 91.67 & 100   & 67.36 \\ \hline
+    A2 & 73.61 & 77.78 & 68.75 & 78.47 & 82.64 & 72.92 \\ \hline
+    A3 & 98.61 & 93.75 & 84.03 & 98.61 & 97.22 & 86.11 \\ \hline
+    A4 & 78.47 & 90.97 & 86.11 & 95.14 & 87.50 & 75.00 \\ \hline
+    A5 & 70.18 & 77.78 & 81.25 & 75.00 & 79.86 & 80.56 \\ \hline
+    A6 & 69.44 & 79.86 & 72.22 & 74.30 & 75.00 & 75.69 \\ \hline
+    A7 & 84.72 & 97.92 & 97.92 & 97.92 & 97.92 & 84.03 \\ \hline
+    A8 & 99.31 & 94.44 & 97.22 & 95.14 & 97.22 & 95.83 \\ \hline
+    A9 & 92.36 & 95.14 & 100   & 90.97 & 96.53 & 97.92 \\ \hline
+    \end{tabular}
+    
+   
+    \label{akb1}
+\end{table}
+
+\begin{table}
+ \caption {Comparison with CSP}
+ \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    ~  & DS    & CSP   \\ \hline
+    A1 & 86.81 & 88.89 \\ \hline
+    A2 & 73.61 & 51.39 \\ \hline
+    A3 & 98.61 & 96.53 \\ \hline
+    A4 & 78.47 & 70.14 \\ \hline
+    A5 & 70.18 & 54.86 \\ \hline
+    A6 & 69.44 & 71.53 \\ \hline
+    A7 & 84.72 & 81.25 \\ \hline
+    A8 & 99.31 & 93.75 \\ \hline
+    A9 & 92.36 & 93.75 \\ \hline
+    \end{tabular}
+   
+    \label{akb3}
+\end{table}
+    
+The Table~\ref{akb3} shows comparison of dual spectral regularizer to CSP for left hand and right hand motor imagery (results in percentage), for CSP analysis, only 3 filter pairs are retained for feature extraction and LDA is used for classification. The DS regularizer with an auto tuned coefficient matrix easily outperforms CSP. For the ECoG data set DS regularizer was able to achieve 91$ \% $ accuracy which is equivalent to winner's classification accuracy.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=1]{Figure1/akkb.png}
+\caption{Low rank weight matrix for ECoG data}
+\label{akkb}
+\end{figure}
+The Fig.~\ref{akkb} shows the learned low rank coefficient matrix W using DS regularizer. The raw CSP performance is only 67$ \% $ for this dataset. However the performance of DS regularizer is reduced if we allow further flexibility by dealing with the alpha-band $7-15$ Hz and beta-band $15-30$ Hz separately Fig.~\ref{alp}. The first model captures alpha activity; the second model captures beta activity. One possible explanation is over fitting. In all the topoplots shown red indicates strong positivity and violet indicates strong negativity and the black dots indicate electrode position. The Fig.~\ref{alp} shows the spatial filter captured by $7-30$ Hz, $7-15$ Hz, and $15-30$ Hz respectively, by the detector models for left hand and right hand motor imagery in the top row. The bottom row shows spatial pattern, since the block weight matrix associated to the second-order component is symmetric; we show the eigenvalues of this matrix as spatial pattern. The DS regularizer tries to reduce the rank of matrix $W$ by discarding the irrelevant rows and columns, which finally results in features being concentrated in certain areas.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.7]{Figure1/alpha.png}
+\caption{Spatial filter and spatial pattern}
+\label{alp}
+\end{figure}
+
+The Fig. \ref{alp} shows spatial filter captured for left hand, right hand trial. The spatial filters are obtained by whitening right or left singular vector after singular value decomposition $w_j=\sum^{s-1/2} V(:,j)$.  We can see from the Fig.~\ref{alp} the features captured by alpha and beta band combined, alpha and beta models for the same task. The second-order models can be applied efficiently online with DS regularization because the coefficient matrix is typically low rank. 
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.7]{Figure1/sfcsp.png}
+\caption{Spatial filter captured by CSP}
+\label{alp1}
+\end{figure}
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.65]{Figure1/ContraFiltDS.png}
+\caption{Spatial filter captured by one step process with DS}
+\label{CSPDSComp}
+\end{figure}
+Fig.~\ref{alp1} shows the two spatial filters captured by CSP corresponding to left hand and right hand movements. The two spatial filters captured by one step process with DS regularization method is shown in Fig.~\ref{CSPDSComp}. The one step process with DS regularization picked up the discriminative information whereas CSP captured noise along with it. 
+
+
+\section{CSP with Tikhonov Regularization}
+
+
+This algorithm is based on the regularization of the CSP objective function using quadratic penalties. Tikhonov Regularization is a classical form of regularization, initially introduced for regression problems, and which consists in penalizing solutions with large weights. The penalty term is then $P(w)= \Vert w \Vert_2= w^T w= w^T Iw$. Such regularization is expected to constrain the solution to filters with a small norm, hence mitigating the influence of artifacts and outliers. There is a weighted version of Tikhonov Regularization called Weighted Tikhonov regularization~\cite{34}; here instead $I$, a channel prior weight matrix $K$ is used. The diagonal matrix $D$ can be assumed in several ways. With this quadratic penalty the CSP objective function be can written as in Eqn~\ref{Tikh} .
+\begin{equation}
+J\left(w\right)=\frac{w^T C_1 w}{w^T C_2 w + \alpha w^T I w}
+\label{Tikh}
+\end{equation}
+where $\alpha$ is regularization parameter that we need to fine tune using cross-validation. 
+
+\section{Novelty in our work}
+
+Using the signal analysis framework built, Tikhonov regularization can be incorporated in to our model. No previous work has been reported on incorporating Tikhonov regularization in to one step signal analysis framework.In the one step classification procedure, the weight matrix $W$ is assumed to be a diagonal matrix formed by multiplication of spatial filter matrices $w^T w$. By minimizing the trace of this matrix $W$, the sum of squared euclidean norms of each spatial filters are minimized. This regularization can be employed by changing the regularizing term to $trace(W)$ and putting the constraint W is a diagonal matrix in Eqn.~\ref{eq416}. The constraint $W$ is a PSD matrix is removed, because of inferior performance. Also channel priors can be introduced by changing the regularizing term to $trace(W*D)$, where $D$ is the diagonal matrix with channel priors. The Fig.~\ref{alp2} and Fig.~\ref{eigtrcsp} shows the filter pair learned with this regularization for left and right hand motor imagery and by TRCSP using Eigen decomposition from ~\cite{34}, both looks similar.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.65]{Figure1/trcsp.png}
+\caption{Spatial filter learned by one step process for TRCSP}
+\label{alp2}
+\end{figure}
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.65]{Figure1/trcspByEig.png}
+\caption{Spatial filter learned by TRCSP by Eigen decomposition}
+\label{eigtrcsp}
+\end{figure}
+
+\begin{table}
+\centering
+\caption {Performance Comparison of TRCSP Using One Step Process and by eigen decomposition}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    ~  & One Step TRCSP   & TRCSP \\ \hline
+    A1 & 85.68 & 88.89 \\ \hline
+    A2 & 60.42 & 54.17 \\ \hline
+    A3 & 90.72 & 96.53 \\ \hline
+    A4 & 73.61 & 70.83 \\ \hline
+    A5 & 58.33 & 62.50 \\ \hline
+    A6 & 70.56 & 67.36 \\ \hline
+    A7 & 81.94 & 81.25 \\ \hline
+    A8 & 89.56 & 95.87 \\ \hline
+    A9 & 90.00 & 91.67 \\ \hline
+    \end{tabular}
+    \label{tabcomp}
+\end{table}
+
+From the Fig.~\ref{alp2} the spatial filters learned by this method is not as concentrated as spatial filters learned by DS regularization. From table ~\ref{tabcomp} we can see both the algorithm has comparable performance. The table shows classification accuracies in percentage for test data. If a comparison with DS regularization is made, the DS regularization outperforms TRCSP slightly, for this dataset in most of the cases, for some case this method works better. So, this points to requirement of subject specific learning algorithms instead of a fixed one. Also, one thing to note that here we cannot say completely that weight matrix $W$ is SPSD due to $w^T w$ alone, this matrix also consists of weighting parameters for classification. 
+
+This regularized objective function is easy to implement, since it is smooth and convex. But again raw implementation is CPU intensive and slower because of large number of variables to optimize for dataset 4a 22 variables in $W\in S_+^{22}$ (since $W$ is diagonal) plus one bias term. For a second order solver to make a step, gradient of this 23 variables and inverse of Hessian matrix (second derivative) has to be calculated. There are second order solvers for optimization which works very fast when gradient is supplied like Limited memory quasi-Newton method, here $H^{-1}$ is approximated incrementally from supplied gradient. L-BFGS (Limited-Memory Broyden-Fletcher-Goldfarb-Shanno)~\cite{35} is a practical variant of it. In our case objective function is smooth and gradient can be supplied so this method can be used. 
+
+\section{Conclusion}
+
+The spectral $\ell_1$-regularization in the weight matrix space provides not only a principled way of complexity control but also an elegant low rank solution that concentrates all the discriminative information in a few components. Using the LMI technique the inference task is formulated  as a single convex optimization problem. Here the method is applied to the single trial EEG classification problem in the context of BCI. This method significantly outperforms conventional methods. Moreover, the method automatically produces a decomposition of the signal into small number of components; the number of components is automatically selected. This method sidesteps the explicit rank constraints, which usually result in non-convex optimization, by using the $\ell_1$-regularization on the singular values of the weight matrix. The one step feature extraction and discrimination with TRCSP learns an efficient model which combats overfitting and results in better classification accuracy for test data.
+

@@ -1,0 +1,26 @@
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Brain Computer Interface\relax }}{2}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Visualization of Brain Rhythms\relax }}{11}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Two element feature vectors for all exciting trials in red and non-exciting trials in green\relax }}{17}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Geometric approach before and after CSP filtering\relax }}{24}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Spatial Pattern\relax }}{27}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Spatial Filter\relax }}{27}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces From the 3D scatter plots it is clear that LDA outperforms PCA in terms of class discrimination n this is one example where the discriminatory information is not aligned with the direction of maximum variance\relax }}{30}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces The two classes are not well separated when projected onto this line\relax }}{31}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces This line succeeded in separating the two classes and in the mean time reducing the dimensionality of our problem from two features $(x1,x2)$ to only a scalar value $y$.\relax }}{31}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Befor Linear Discrimination\relax }}{32}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces After Linear Discrimination.\relax }}{33}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Logistic Function\relax }}{38}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Timing scheme of the BCI paradigm\relax }}{45}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Electrode Positions\relax }}{45}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Low rank weight matrix for ECoG data\relax }}{48}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Spatial filter and spatial pattern\relax }}{49}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Spatial filter captured by CSP\relax }}{50}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Spatial filter captured by one step process with DS\relax }}{50}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Spatial filter learned by one step process for TRCSP\relax }}{51}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Spatial filter learned by TRCSP by Eigen decomposition\relax }}{51}
+\addvspace {10\p@ }

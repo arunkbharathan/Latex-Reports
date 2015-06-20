@@ -1,0 +1,827 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt]{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+%\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[Short title]{One Step Feature Extraction and Classification For Brain Computer Interface} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Arun K Bharathan} % Your name
+\institute[NSSCE] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+NSS College of Engineering, Palakkad\\ % Your institution for the title page
+\medskip
+\textit{arunkbharathan@gmail.com} % Your email address
+}
+\date{\today} % Date, can be changed to a custom date
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+\begin{frame}
+\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+%------------------------------------------------
+\section{Introduction} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+%------------------------------------------------
+\subsection{Project Overview} 
+\begin{frame}%[shrink=5]
+\frametitle{Project Overview}
+Common Spatial Patterns (CSP) is a popular algorithm in BCI field for learning spatial filters for oscillatory processes. But the CSP method is not optimal. A few spatial filters are chosen arbitrarily from the learned spatial filter matrix $W$ of CSP. Here a method based on optimization approach is used to select optimum weight matrix, which combines the feature extraction and classification stages in normal BCI. Thus use of an independent classification stage like LDA is avoided.
+\end{frame}
+
+\subsection{BCI Overview} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\begin{frame}%[shrink=5]
+\frametitle{Brain Computer Interface}
+\begin{itemize}
+\setbeamertemplate{items}[ball] 
+\item Brain Computer Interface (BCI) is a hardware and software communications system that permits cerebral activity alone to control computers or external devices.
+\item The immediate goal of BCI research is to provide communications capabilities to severely disabled people who are totally paralysed or 'locked in' by neurological neuromuscular disorders.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.7\linewidth]{Figure/BCiBasic.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{As a Signal Processing Scheme}
+
+\includegraphics[width=0.9\linewidth]{Figure/WhatIsBCI.png}
+
+\end{frame}
+
+%------------------------------------------------
+\subsection{Brain Rhythms}
+\begin{frame}
+\frametitle{Brain Rhythms}
+\begin{figure}
+\includegraphics[width=0.37\textwidth]{Figure/NeuralImpulses.png}
+\hfill
+\includegraphics[width=0.5\textwidth]{Figure/BrainStructure.png}
+\end{figure}
+\begin{itemize}
+\setbeamertemplate{items}[ball] 
+\item Delta (less than 4 Hz)
+\item Theta (4 to 7 Hz)
+\item Alpha (8 to 12 Hz) and Mu (7 to 13 Hz)
+\item Beta (12 to 30 Hz)
+\item Gamma (30 to 100 Hz)
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\subsection{Motor Imagery Events}
+\begin{frame}
+\frametitle{Events}
+\begin{itemize}
+\setbeamertemplate{items}[ball] 
+\item Different parts of brain generate oscillations when idle.
+\item The amplitude of oscillations starts to decrease when we think of moving a limb.
+\item It reaches a minimum just after the onset of motion called Event Related De-synchronization (ERD), then it reverts back called Event Related Synchronization (ERS)
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Steps in BCI along with work}
+\begin{frame}
+\frametitle{Steps that form a standard BCI}
+\begin{enumerate}
+
+\item   \textbf {Signal Acquisition }
+\item \textbf {Pre-processing} 
+\item \textbf {Feature Extraction}
+\item \textbf {Classification }
+\item \textbf {Control Interface}
+\end{enumerate}
+\end{frame}
+
+%------------------------------------------------
+\subsection{Signal Acquisition}
+%------------------------------------------------
+\begin{frame}[shrink=5]
+\frametitle{Signal Acquisition}
+\begin{block}{EEG}
+  \begin{itemize}
+    \item Poor quality weak signals.
+      \item Low spatial resolution and high spectral resolution.
+        \item severely affected by background noise.
+        \item Non-invasive technique, so widely used.
+     \end{itemize} 
+     Used 4 class dataset, 2a from BCI Competition 4, has 22 EEG and 3 EOG electrodes. 
+\end{block}
+
+\begin{block}{ECoG}
+ \begin{itemize}
+    \item Good quality strong signals
+      \item High spatial and spectral resolution.
+        \item Low in artifacts.
+        \item Requires Craniotomy.
+     \end{itemize}
+     Used 2 class dataset, dataset 1 from BCI Competition 3, has 8$\times$8 ECoG electrodes. 
+      \end{block}
+\end{frame}
+%------------------------------------------------
+\subsection{Pre-processing}
+\begin{frame}[shrink=5]{Pre-processing}
+\begin{block}{EEG}
+  \begin{itemize}
+    \item $4C_2$ binary combination was extracted each with 144 testing and training trials.
+      \item RLS filtered, BPF at 7-30 Hz.
+        \item 0.5 to 3.5 sec epoch was cut out after visual cue.
+        \item Down-sampled to 100 Hz and whitened the covariance matrices.
+     \end{itemize} 
+    \end{block}
+\begin{block}{ECoG}
+ \begin{itemize}
+    \item Available as 3 sec epoch cut out after visual cue at $F_s$=1000 Hz.
+      \item Filtered at 7-30 Hz with \emph{filtfilt} Matlab command.
+        \item Down-sampled to 100 Hz and whitened the covariance matrices.
+     \end{itemize}
+         \end{block}
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Dataset Description}
+\textbf{BCI Competition IV Dataset 4a}
+  \begin{itemize}
+    \item 4 class EEG dataset with 22 electrodes and 3 EOG electrodes.
+      \item Left hand [Class 1], Right hand [Class 2], Feet [Class 3], Tongue [Class 4].
+        \item 9 subjects, each with 144 testing and 144 training trials.
+        \item Sampled at $250 Hz$, BPF at $0.5 Hz$ and $100 Hz$ and a notch filter at $50 Hz$. 
+     \end{itemize} 
+    \end{frame}
+    %------------------------------------------------
+\begin{frame}{Cont.}
+   \begin{figure}
+\includegraphics[width=2.5in]{Figure/TimSch.png}
+ \caption {Timing Scheme}
+\end{figure}
+\begin{figure}
+  \includegraphics[width=1.5in]{Figure/ElecPos.png}
+ \caption {Electrode Positions}
+\end{figure}
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Dataset Description}
+\textbf{BCI Competition III Dataset 1}
+  \begin{itemize}
+    \item 8x8 ECoG electrode grid placed on right motor cortex.
+      \item Imagined figure and tongue movements recorded for 3 seconds duration.
+        \item Sampled at 1000 Hz.
+        \item Recording started after 0.5 second to avoid VEP.
+        \item Available as data epoch of 64x3000x278 for training and 64x3000x100.
+     \end{itemize} 
+    \end{frame}
+    %------------------------------------------------
+
+\begin{frame}
+\Huge{\centerline{Feature Extraction Techniques}}
+\end{frame}
+%------------------------------------------------
+\subsection{Feature Extraction Techniques}
+\begin{frame}{Logarithmic Band-power}
+\begin{itemize} \setbeamertemplate{items}[ball]
+\item Band pass filter trials at (7 - 30) Hz.
+\item Only 118 weights and 1 bias term to learn.
+  \end{itemize}
+\begin{figure}
+\includegraphics[width=2.5in]{Figure/LogBP.png}
+\end{figure}
+\begin{itemize} \setbeamertemplate{items}[ball]
+\item Suppose $X\in \Re^{118\times 3000} $.
+\item But
+\begin{itemize} \setbeamertemplate{items}[circle]
+\item Does not capture time variation in oscillations.
+\item Combine multiple bands.
+\item No data adaptive feature.
+  \end{itemize}
+  \end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Common Spatial Patterns}
+\begin{itemize} \setbeamertemplate{items}[ball]
+\item A data dependent spatial filtering.
+\item Can exploit ERS and ERD localized in the motor cortex.
+\item Simple, fast and relatively robust.
+\item Projects multichannel EEG signals into a subspace, where differences are maximized and similarities are minimized.
+\item Works on normalized spatial covariance matrix.
+\[ C=\frac{XX^T}{trace\left(XX^T\right) } \]
+  \end{itemize}
+  \begin{itemize} \setbeamertemplate{items}[ball]
+\item $C\in \Re^{118\times 118} $.
+\item \[f_\theta\left(X\right)=\sum_{j=1}^J \beta_j\log\left(w_j^T S^T B_j B_j^T S w_j\right)+\beta_0 \]
+\end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Common Spatial Patterns}
+\begin{figure}
+\includegraphics[width=2in]{Figure/CSProt.png}
+\end{figure}
+\begin{itemize} \setbeamertemplate{items}[ball]
+\item $X=AS$,$\;\;\; X,S\in \Re^{118\times 3000}$,$\;\; A\in \Re^{118\times 118} $
+\item  $S=WX$,$\;\;\; X,S\in \Re^{118\times 3000}$,$\;\; W\in \Re^{118\times 118} $
+ \begin{itemize} \setbeamertemplate{items}[ball]
+\item A is forward mapping matrix.
+\item W is inverse mapping matrix.
+\end{itemize}
+  \end{itemize}
+  \begin{figure}
+ \includegraphics[width=1in]{Figure/Projec.png}
+ \end{figure}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Common Spatial Patterns}
+\textbf{CSP spatial filters}
+
+\begin{itemize} \setbeamertemplate{items}[ball]
+\item W is the generalized eigenvectors of covariance matrices $C_1$ and $\left( C_1 + C_2\right) $
+\item By optimization approach
+\begin{itemize}  \setbeamertemplate{items}[circle]
+\item  \[  w_c= \max_w \frac{w^T C_1 w}{w^T C_2 w}\;\; s.t.\;  w^TC_2 w=1 \]
+\end{itemize}
+\item But we take only 1-3 pair of filters and patterns from either side of W and A, respectively.
+\item If we take only 1 pair
+\begin{itemize}  \setbeamertemplate{items}[circle]
+\item  \[  W_{2\times 118}\times X_{118\times 3000}=S_{2\times 3000} \]
+\end{itemize}
+\item Taking log variance of $S$, LDA has to learn only 3 parameters (including bias term). 
+  \end{itemize}
+
+ \end{frame}
+%------------------------------------------------
+\begin{frame}
+\fontsize{6pt}{7.2}\selectfont
+\Large{\centerline{Combined Feature Extraction 
+and
+ Classification}}
+\end{frame}
+%------------------------------------------------
+\subsection{Combined Feature Extraction and Classification}
+\begin{frame}{Combined Feature Extraction and Classification}
+ \begin{itemize}
+  \item  The method learns in a single step both the spatial filters and the relative weights.
+\item A unified, globally optimal solution to spatial filter estimation (an alternative to CSP+LDA).
+\item This is an optimization-based approach.
+      \item Offers a lot of flexibility, a number of parameters are available for fine tuning.
+        \item Used to investigate neuroscientific questions about the underlying process.
+\item Can impose various regularizers and loss terms while optimizing.
+\item Using various regularizers different assumptions on the structure of data can be made.
+
+     \end{itemize}
+\end{frame}
+%------------------------------------------------
+\subsubsection{Signal Analysis Framework}
+\begin{frame}{Signal Analysis Framework}
+\textbf{The framework consists of three  components.}
+
+ \begin{enumerate}
+         \setbeamertemplate{items}[default]
+  \item  Probabilistic predictor model.
+    \item Detector function.
+      \item Regularization.
+        \end{enumerate}
+\end{frame}
+%------------------------------------------------
+
+\begin{frame}{Probabilistic predictor model}
+Learns a probability model from input data to given label.\vspace{.1in}
+\setbeamertemplate{items}[rectangle] 
+ \begin{itemize}
+     \item Probabilistic predictor are facing two tasks.
+     \begin{itemize}
+\setbeamertemplate{items}[default] 
+      \item How to learn the predictor from a collection of labelled examples.
+      \item How to decode the intention of a user given the brain signal and the predictor.
+      \end{itemize}
+        \end{itemize}
+        Let 
+        \begin{itemize}
+        \setbeamertemplate{items}[circle]
+         \item  $X$ $\in \chi$ , input brain signal 
+         \item      $q\left(Y\vert X\right)$ is the predictor which assigns probabilities to the user's command  $y\in Y$ given the brain signal X.
+             \end{itemize}
+             \vspace{.1in}
+            The task of decoding is to find the most likely command  $\hat{y}$ given the input X and the predictor q as follows:
+            \[
+  \tilde{y}=arg\max_{y\in Y} q\left(Y=y\mid X\right)
+\]
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Probabilistic predictor model}
+
+\setbeamertemplate{items}[circle] 
+ \begin{itemize}
+    \item The task of learning is to find a predictor from a suitably chosen collection of candidate models.
+
+    \item Assume that a model is parametrized by a parameter $\theta \in \Theta$.
+
+    \item The loss function is defined as the negative logarithmic pay off (or the Shannon information content in information theory) as follows:
+             \end{itemize}       
+            \[
+  \ell_L\left(\left(X,y\right),\theta\right)=-\log q_\theta\left(Y=y\mid X\right)
+\]
+ \begin{itemize}
+    \item Loss is smaller if the predictor predicts the actual intention of the user with high confidence.
+    \end{itemize}  
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Probabilistic predictor model}
+\[
+L_n\left(\theta\right)=\frac{1}{n}\sum_{i=1}^n\ell_L\left(\left(X_i,y_i\right),\theta\right)
+\]
+\setbeamertemplate{items}[circle] 
+ \begin{itemize}
+    \item  Minimization of  $L_n\left(\theta\right)$ leads to over-fitting due to small sample size.
+
+    \item The parameter $\theta$ is determined by solving the following constrained minimization problem: 
+               \end{itemize}   
+                   
+            \[
+ \min_{\theta\in\emptyset}L_n\left(\theta\right)\; s.t\quad \Omega\left(\theta\right)\leq C
+\]
+ \begin{itemize}
+    \item The second term  is called the regularizer.
+     \item C is a hyper-parameter that controls the complexity of the model.
+    \end{itemize}  
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Probabilistic predictor model}
+ \begin{itemize}
+ \item If we suppose that the training examples $\lbrace X_i,y_i\rbrace_{i=1}^n$ are sampled i.i.d from some probability distribution $p(X, Y)$, the above function $L_n(\theta)$ can be considered as the empirical version of the following function.
+ \end{itemize}
+ 
+    \[ L\left(\theta\right)=D\left(p\left(Y\mid X\right)\parallel q_\theta\left(Y\mid X\right)\right) + H\left(p\left(Y\mid X\right)\right) \]
+   
+   \begin{itemize}
+\item $D\left(p\| q\right)$ is Kullback$-$Leibler divergence between two probability distributions p and q.
+\item Second term is the conditional entropy of Y given X and is a constant that does not depend on the model parameter θ.
+    \end{itemize}  
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Probabilistic predictor model}
+\textbf{Logistic Model}
+ \begin{itemize}
+\item The logistic model assumes the user command Y to be either one of the two possibilities; e.g., Y= -1 and Y= +1 for left and right-hand movement, respectively. 
+\item The logistic predictor $q_\theta $ is defined through a latent function $f_\theta $ (Detector function).
+\item The detector function outputs a positive number if $Y= +1$ is more likely than $Y= -1$ and vice versa.
+\item The logistic model converts it into the probability of $Y= +1$ given $X$
+    \end{itemize}
+    
+\[    q_\theta\left(Y=y\mid X\right)=\frac{1}{1+\exp{\left(-y f_\theta\left(X\right)\right)}}\quad \left(y\in\lbrace +1,-1 \rbrace\right) \]
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Probabilistic predictor model}
+\textbf{Logistic loss function}
+ \begin{itemize}
+ \item The loss function for the logistic model.
+ \end{itemize}
+ \[\ell_L\left(\left(X,y\right),\theta\right)=\log\left(1+\exp{\left(-y f_\theta\left(X\right)\right)}\right) \]
+ \begin{itemize}
+ \item The function $f_\theta$  is called a detector because in the BCI context it captures some characteristic spatio-temporal activity in the brain.
+
+ \end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Detector Function}
+
+ \begin{itemize}
+ \item The commonly used CSP based detector model can be written as follows:
+ \end{itemize}
+ \[f_\theta\left(X\right)=\sum_{j=1}^J \beta_j\log\left(w_j^T S^T B_j B_j^T S w_j\right)+\beta_0 \]
+ \begin{itemize}
+ \item We use the following linear detector function:
+ \end{itemize}
+ \[  f_\theta\left(X\right)=\langle W,S^T S\rangle+b  \]
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Detector Function}
+ \begin{itemize}
+ \item We can set X as a block diagonal concatenation of the covariance as follows:
+ \end{itemize}
+ \[ X = \left(\begin{array}{ccc} {\frac{1}{\eta_{\left(1\right)}}\Xi^{\left(1\right)}} &   &  \\   & {\frac{1}{\eta_{\left(2\right)}}\Xi^{\left(2\right)}} &  \\   &   & {\frac{1}{\eta_{\left(k\right)}}\Xi^{\left(k\right)}} \end{array}\right) \]
+ \begin{itemize}
+ \item Where,
+  \begin{itemize}
+  \item $\Xi^{\left(k\right)}$ is the covariance matrix of a short segment of band-pass filtered EEG signal.
+  \item $\eta_{\left(k\right)}$ is the normalization factor to prevent biasing the selection of terms with large power, it is the square root of the total variance of each block element.
+ \end{itemize}
+  \end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Regularization}
+ \begin{itemize}
+    \setbeamertemplate{items}[default]
+ \item Regularizer used is the linear sum of singular-values of the weight matrix W, which is called the dual spectral (DS) norm.
+ 
+  \[\Omega_{DS}\left(\theta\right)=\sum_{j=1}^r \sigma_j\left(W\right) \]
+  
+   \begin{itemize}
+   \setbeamertemplate{items}[circle]
+ \item $\sigma_j\left(W\right)$ is the $j^{th}$ singular value of the weight matrix $W$.
+ \item r is the rank of $W$.
+   \end{itemize}
+   \item The DS regularization can be considered as a case of the $\ell_1$-regularization; it induces sparsity in the singular-value spectrum of the weight matrix $W$.
+
+   \item That is, it induces low-rank matrix $W$.
+    \item The DS regularization automatically tunes the feature detectors as well as the rank of $W$.
+ 
+  \end{itemize}
+
+ \end{frame}
+ 
+ \section{Modification}
+%------------------------------------------------
+\begin{frame}{CSP with Tikhonov Regularization}
+ \[  w_c= \max_w \frac{w^T C_1 w}{w^T C_2 w + \alpha w^T K w}\;\; s.t.\;  w^TC_2 w=1 \]
+ \begin{itemize}  \setbeamertemplate{items}[default]
+   \item '$C_x$' is the average covariance matrix of class 1 and 2.   
+   \item Where K is identity matrix or any diagonal matrix that encode channel prior.
+   \item The above regularization is equal to minimizing the squared euclidean norm of each channel.
+\item ‘$\alpha$’ is the regularization parameter, that is to be fine tuned by cross validation on training data.
+\item ‘$\alpha$’ fixes how much it should believe Identity matrix than covariance matrix.
+
+   \end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Cont.}
+  \begin{itemize}  \setbeamertemplate{items}[default]
+   \item To prevent over-fitting in CSP due to short data set or noisy data set.
+\item Restricts w to have small norms. 
+\item Performs better than CSP for noisy and short data set.
+   \end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Modification}
+ \begin{itemize} \setbeamertemplate{items}[default]
+\item In our detector function W is a symmetric matrix and $W=w\times w^T$.
+ \[  f_\theta\left(X\right)=\langle W,X\rangle+b  \]
+\item The diagonal element is equal to squared euclidean norm of channel.
+\item Change regularization term to trace(W) with our predictor model.
+\item Here W is constraint to diagonal matrix.
+  \end{itemize}
+ \end{frame}
+%------------------------------------------------
+ \section{Results}
+\begin{frame}{Results}
+Result for ECoG data set.
+ \begin{itemize} \setbeamertemplate{items}[default]
+\item 91$\%$ of accuracy is achieved with single second order model  (7-30 Hz).
+  \end{itemize}
+  \begin{figure}
+\includegraphics[width=0.3\linewidth]{Figure/akkb.png}
+\end{figure}
+\begin{itemize} \setbeamertemplate{items}[default]
+\item Figure shows learned low rank weight matrix $W\in R^{64\times 64}$ .
+  \end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Results}
+Results for EEG data set.
+ \begin{table}[hbtp]
+ \caption {Result for Dataset 2a}
+ \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    ~  & [1 2] & [1 3] & [1 4] & [2 3] & [2 4] & [3 4] \\ \hline
+    A1 & 86.81 & 85.42 & 99.31 & 91.67 & 100   & 67.36 \\ \hline
+    A2 & 73.61 & 77.78 & 68.75 & 78.47 & 82.64 & 72.92 \\ \hline
+    A3 & 98.61 & 93.75 & 84.03 & 98.61 & 97.22 & 86.11 \\ \hline
+    A4 & 78.47 & 90.97 & 86.11 & 95.14 & 87.50 & 75.00 \\ \hline
+    A5 & 70.18 & 77.78 & 81.25 & 75.00 & 79.86 & 80.56 \\ \hline
+    A6 & 69.44 & 79.86 & 72.22 & 74.30 & 75.00 & 75.69 \\ \hline
+    A7 & 84.72 & 97.92 & 97.92 & 97.92 & 97.92 & 84.03 \\ \hline
+    A8 & 99.31 & 94.44 & 97.22 & 95.14 & 97.22 & 95.83 \\ \hline
+    A9 & 92.36 & 95.14 & 100   & 90.97 & 96.53 & 97.92 \\ \hline
+    \end{tabular}
+    
+   
+    \label{akb1}
+\end{table}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Results (Cont.)}
+Results for EEG data set.
+\begin{table}
+ \caption {Comparison with CSP}
+ \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    ~  & DS    & CSP   \\ \hline
+    A1 & 86.81 & 88.89 \\ \hline
+    A2 & 73.61 & 51.39 \\ \hline
+    A3 & 98.61 & 96.53 \\ \hline
+    A4 & 78.47 & 70.14 \\ \hline
+    A5 & 70.18 & 54.86 \\ \hline
+    A6 & 69.44 & 71.53 \\ \hline
+    A7 & 84.72 & 81.25 \\ \hline
+    A8 & 99.31 & 93.75 \\ \hline
+    A9 & 92.36 & 93.75 \\ \hline
+    \end{tabular}
+   
+    \label{akb3}
+\end{table}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Results (Cont.)}
+Results for EEG data set.
+\begin{table}
+\centering
+\caption {Performance Comparison of TRCSP Using One Step Process and by eigen decomposition}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    ~  & One Step TRCSP   & TRCSP \\ \hline
+    A1 & 85.68 & 88.89 \\ \hline
+    A2 & 60.42 & 54.17 \\ \hline
+    A3 & 90.72 & 96.53 \\ \hline
+    A4 & 73.61 & 70.83 \\ \hline
+    A5 & 58.33 & 62.50 \\ \hline
+    A6 & 70.56 & 67.36 \\ \hline
+    A7 & 81.94 & 81.25 \\ \hline
+    A8 & 89.56 & 95.87 \\ \hline
+    A9 & 90.00 & 91.67 \\ \hline
+    \end{tabular}
+    \label{tabcomp}
+\end{table}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Results (Cont.)}
+Results for EEG data set.
+\begin{figure}
+\includegraphics[width=2.5in]{Figure/trcspvscsp.png}
+\caption{Simulation Results using topoplot for TRCSP and one step method side by side}
+\end{figure}
+Topoplot plots a topographic map of a scalp data field in a 2-D circular view.
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Results (Cont.)}
+Results for EEG data set.
+\begin{figure}
+\includegraphics[width=2.5in]{Figure/alphabeta.png}
+\end{figure}
+\begin{itemize} \setbeamertemplate{items}[ball]
+\item (a) Filter captured by combined alpha and beta band.
+\item (b) Filter captured by alpha band alone.
+\item (c) Filter captured by beta band alone.
+  \end{itemize}
+ \end{frame}
+%------------------------------------------------
+\begin{frame}{Control Interface}
+\setbeamertemplate{items}[default]
+  \begin{itemize}
+    \item  2-dimensional cursor control.
+      \item To gaming devices
+        \item Orthoses and prostheses control.
+        \item Robotic arms.
+    \item Mobile Robots.
+          \end{itemize}
+  \end{frame}
+%------------------------------------------------
+ \section{Conclusion}
+\begin{frame}{Conclusion}
+
+ \begin{itemize} \setbeamertemplate{items}[ball]
+\item The issues of feature learning, feature selection, and feature combination are addressed through regularization.
+\item The key idea of the approach is to focus on directly predicting the intention of a user. 
+\item The method can be employed in the multi-class environment.
+\item Can be applied to other multiple sensor recordings fMRI, Computer vision.
+\item New Detector model, Predictor model, Regularization term can be applied.
+\item Signal analysis Framework can be applied to regression problems.
+  \end{itemize}
+ \end{frame}
+ %------------------------------------------------
+\begin{frame}[shrink=5]{List of Publication}
+\textbf{Presented}
+ \begin{itemize} \setbeamertemplate{items}[ball]
+\item "Review of Feature Extraction Techniques for motor imagery signals in BCI", Arun K Bharathan, Nandakumar P, PIC 2013, IETE Palakkad.
+  \end{itemize}
+\textbf{Accepted}
+ \begin{itemize} \setbeamertemplate{items}[ball]
+\item "One Step Feature Extraction and Classification with Tikhonov Regularization for BCI", Arun K Bharathan, Arun Ashok, Soujya V R, Nandakumar P, ICGCE 2013, Kavarapettai.
+\item "Tikhonov Regularized Spectrally Weighted Common Spatial Patterns", Arun Ashok,Arun K Bharathan, Soujya V R, Nandakumar P, ICCC 2013, Thiruvanathapuram.
+  \end{itemize}
+  \textbf{Communicated}
+   \begin{itemize} \setbeamertemplate{items}[ball]
+\item "Optimizing Spatial Filters By Minimizing Within Class Dissimilarities Using Different Metric Measures In EEG Based Brain Computer Interfaces", Soujya V R, Arun Ashok, Arun K Bharathan, Nandakumar P, SPINCON 2014, Noida.
+  \end{itemize}
+ \end{frame}
+
+%------------------------------------------------
+\section{References}
+\begin{frame}
+\frametitle{References}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem {1} Tomioka, R., and Müller, K. R. (2010). "A regularized discriminative framework for EEG analysis with application to brain-computer interface". Neuroimage, 49(1), 415-432.
+\bibitem {2} Lotte, Fabien, and Cuntai Guan. (2011), "Regularizing common spatial patterns to improve BCI designs: unified theory and new algorithms." Biomedical Engineering, IEEE Transactions on 58, no. 2 : 355-362.
+\bibitem {3a}Lotte, Fabien, and Cuntai Guan. (2010), "Spatially regularized common spatial patterns for EEG classification." In Pattern Recognition (ICPR),  20th International Conference on, pp. 3712-3715. IEEE, 2010.
+\bibitem {3b}Tomioka, Ryota, and Kazuyuki Aihara.(2007) "Classifying matrices with a spectral regularization." In Proceedings of the 24th international conference on Machine learning, pp. 895-902. ACM.
+\bibitem{6} Ramoser, H., Muller-Gerking, J., and Pfurtscheller, G. (2000). "Optimal spatial filtering of single trial EEG during imagined hand movement". Rehabilitation Engineering, IEEE Transactions on, 8(4), 441-446.
+\end{thebibliography}
+}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{References}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem {8} Boyd, Stephen Poythress, and Lieven Vandenberghe. (2004), Convex optimization. Cambridge university press.
+\bibitem {9}  Vandenberghe, Lieven, and Stephen Boyd. (1996) "Semidefinite programming." SIAM review 38, no. 1: 49-95.
+\bibitem {9a} Blankertz, B., Tomioka, R., Lemm, S., Kawanabe, M., \& Muller, K. R. (2008). "Optimizing spatial filters for robust EEG single-trial analysis". Signal Processing Magazine, IEEE, 25(1), 41-56.
+\bibitem {10} Tomioka, Ryota, Kazuyuki Aihara, and Klaus-Robert Müller.(2007) "Logistic regression for single trial EEG classification." Advances in neural information processing systems 19: 1377-1384.
+\bibitem {13}  Grant, Michael, Stephen Boyd, and Yinyu Ye. (2008) "CVX: Matlab software for disciplined convex programming.".
+\bibitem {14}  Delorme, Arnaud, and Scott Makeig.(2004) "EEGLAB: an open source toolbox for analysis of single-trial EEG dynamics including independent component analysis." Journal of neuroscience methods 134.1: 9-21.
+\end{thebibliography}
+}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\Huge{\centerline{The End}}
+\end{frame}
+%------------------------------------------------
+\section{Last Section}
+%------------------------------------------------
+
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Linear Discriminant Analysis}
+\begin{figure}
+    \includegraphics[width=5cm]{Figure/LDA5.jpg}
+  \end{figure}
+\begin{verbatim}
+Mu1=mean(C1feature)';
+Mu2=mean(C2feature)';
+S1=cov(C1feature);
+S2=cov(C2feature);
+Sw=S1+S2;
+SB= (Mu1-Mu2)*(Mu1-Mu2)';
+[V,D]=eig(inv(Sw)*SB);
+FDV=V(:,1); 
+a=C1feature*FDV;
+b=C2feature*FDV;
+\end{verbatim}
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Implementation DS norm}
+\begin{equation}
+\min_{W\in R^{R\times C},b\in R, z\in R^n, Q_1\in S_+^C,Q_2\in S_+^R} \sum_{i=1}^n \ell_{LR}\left(z_i\right)+\lambda \left(Tr[Q_1]+Tr[Q_2]\right), \quad i=1,....,n
+\end{equation}
+\begin{eqnarray*}
+ \quad   y_i\left(Tr[W^T X_i]+b\right)=z_i, \quad
+ i=1,....,n
+\end{eqnarray*}
+\begin{eqnarray*}
+\left(\begin{array}{cc} \mathrm{Q_1} & -\frac{1}{2}W\\ -\frac{\mathrm{1}}{2}W^T & \mathrm{Q_2} \end{array}\right) \succeq 0
+\end{eqnarray*} 
+\end{frame}
+%------------------------------------------------
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{CVX DS Code}
+\begin{verbatim}
+function [W, bias, z]=lrl1(X, Y, lmd)
+C = size(X,1); n = length(Y);
+cvx_begin sdp
+variable W(C,C) symmetric;
+variable U(C,C) symmetric;
+variable bias;
+variable z(n);
+minimize sum(log(1+exp(-z)))+lmd*trace(U);
+subject to
+for i=1:n
+Y(i)*(trace(W*X(:,:,i))+bias)==z(i);
+end
+U >= W; U >= -W;
+cvx_end
+end
+\end{verbatim}
+\end{frame}
+
+
+%----------------------------------------------------------------------------------------
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{CVX Tikhonov Code}
+\begin{verbatim}
+function [W, bias, z]=lrl1(X, Y, lmd)
+C = size(X,1); n = length(Y);
+cvx_begin sdp
+variable W(C,C) diagonal;
+variable bias;
+variable z(n);
+minimize sum(log(1+exp(-z)))+lmd*trace(W);
+subject to
+for i=1:n
+Y(i)*(trace(W*X(:,:,i))+bias)==z(i);
+end
+cvx_end
+end
+\end{verbatim}
+\end{frame}
+%----------------------------------------------------------------------------------------
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{RLS Code}
+\begin{verbatim}
+N=7;
+W=eps*ones(1,N);
+P=eye(7)*1000;
+lambda= 0.95;
+tic
+for i=N:length(x)
+    u=x(i:-1:i-(N-1));
+    y(i)=W*u;
+    e(i)=d(i)-y(i);
+    k=(lambda+u'*P*u)\P*u;
+    W=W+k'*e(i);
+    P=(1/lambda)*(P-k*u'*P);
+    MSE(i-6)=e(i)^2;
+end
+\end{verbatim}
+\end{frame}
+%----------------------------------------------------------------------------------------
+
+\end{document} 

@@ -1,0 +1,118 @@
+%% This is an example first chapter.  You should put chapter/appendix that you
+%% write into a separate file, and add a line \include{yourfilename} to
+%% main.tex, where `yourfilename.tex' is the name of the chapter/appendix file.
+%% You can process specific files by typing their names in at the 
+%% \files=
+%% prompt when you run the file main.tex through LaTeX.
+\chapter{Results and Discussion}
+\section{Introduction}
+In this chapter we discuss about results achieved with this method. The algorithm is applied to different various binary classification problem and resulting plots and tables are shown. For plotting topoplot function from eeglab toolbox is used. A comparison of this algorithm with CSP is also given. A modification of this method another regularization term is also given.
+
+   We use data set from BCI completion IV dataset 2a and dataset 1 of BCI competition III. The data set consists of EEG data from 9 subjects and ECoG recording from 1 subject of motor imagery task respectively.  The dataset description of respective data sets is given below.
+  
+\section{Dataset Description }
+The cue-based BCI paradigm consisted of four different motor imagery tasks, namely the imagination of movement of the left hand (class 1), right hand (class 2), both feet (class 3), and tongue (class 4). Two sessions on different days were recorded for each subject. Each session is comprised of 6 runs separated by short breaks. One run consists of 48 trials (12 for each of the four possible classes), yielding a total of 288 trials per session.
+   The subjects were sitting in a comfortable armchair in front of a computer screen. At the beginning of a trial (t = 0 s), a fixation cross appeared on the black screen. In addition, a short acoustic warning tone was presented. After two seconds (t = 2 s), a cue in the form of an arrow pointing either to the left, right, down or up (corresponding to one of the four classes left hand, right hand, foot or tongue) appeared and stayed on the screen for 1.25 s. This prompted the subjects to perform the desired motor imagery task. No feedback was provided. The subjects were ask to carry out the motor imagery task until the fixation cross disappeared from the screen at t = 6 s. A short break followed where the screen was black again. The paradigm is illustrated in Figure~\ref{akb1}.
+   \begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.2]{F:/MTECH/THESIS/templates/figure/akb1.png}
+\caption{Timing scheme of the BCI paradigm}
+\label{akb1}
+\end{figure}
+\subsection{Data recording}
+Twenty-two Ag/AgCl electrodes (with inter-electrode distances of 3.5 cm) were used to record the EEG; the montage is shown in Figure~\ref{akb2} left. All signals were recorded monopolarly with the left mastoid serving as reference and the right mastoid as ground. The signals were sampled with 250 Hz and band pass-filtered between 0.5 Hz and 100 Hz. The sensitivity of the amplifier was set to 100 $ \mu V $. 
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.2]{F:/MTECH/THESIS/templates/figure/akb2.png}
+\caption{Electrode Positions}
+\label{akb2}
+\end{figure}
+
+   An additional 50 Hz notch filter was enabled to suppress line noise. In addition to the 22 EEG channels, 3 monopolar EOG channels were recorded and also sampled with 250 Hz (see Figure~\ref{akb2} right). They were band pass filtered between 0.5 Hz and 100 Hz (with the 50 Hz notch filter enabled), and the sensitivity of the amplifier was set to 1 mV. The EOG channels are provided for the subsequent application of artefact processing methods.
+\subsection{BCI competition III Dataset 1}
+ During the BCI experiment, a subject had to perform imagined movements of either the left small finger or the tongue. The time series of the electrical brain activity was picked up during these trials using a 8x8 ECoG platinum electrode grid which was placed on the contra lateral (right) motor cortex. The grid was assumed to cover the right motor cortex completely, but due to its size (approx. $ 8\times 8 $cm) it partly covered also surrounding cortex areas. All recordings were performed with a sampling rate of 1000Hz. After amplification the recorded potentials were stored as microvolt values. Every trial consisted of either an imagined tongue or an imagined finger movement and was recorded for 3 seconds duration. To avoid visually evoked potentials being reflected by the data, the recording intervals started 0.5 seconds after the visual cue had ended. The test and training data were taken with one week gap.
+\section{Signal pre-processing and predictor model}
+The dataset 2a is 4 class classification problem with trials corrupted by EOG artefacts. But here we focus on binary classification. All the pair wise combination of the performed classes produced 6 datasets per subject with 144 trials per class, so a total of $6\times 9\times 144  $trials for training. The numbers of trials for testing were also same. The ECoG data set consists of 278 training trials and 100 testing trials. The ECoG data set was filtered using filtfilt command in matlab because it avoids start-up transients. For the dataset 2a the signal is band-pass filtered at 7-30Hz and the interval 500-3500ms after the appearance of visual cue is cut out from the continuous EEG signal as a trial $ s\in R^{C\times T} $ where C is the number of electrodes and T is the number of sampled time points. The input matrix X is defined as $ X=SS^{T} $ where X is the channel covariance matrix. We didn’t normalize the input data S, because it reduced performance. For dataset 2a all the 22 channels were filtered with a RLS filter using the 3 EOG channels provided. Only 22 channels were used for the testing and training purpose. Since the number of channel is only 22 the algorithm works faster. Since the problem is binary we use the logistic predictor model described in previous chapter Eq. (4.6), thus the decoding is carried out by simply taking the sign of the detector function as follows:
+\[  \alpha_{k}  = \left\{ 
+  \begin{array}{l l}
+    +1  & \quad \text{if $ f_{\theta}(S)\geq 0 $}\\
+    -1 & \quad \text{if $ f_{\theta}(S)\leq 0 $}
+  \end{array} \right.\]
+  
+  For the learning of the detector function the logistic loss function (Eq. (4.8)) was used in Eq. (4.4).
+  
+  For the detector function we use a single second order detector working on complete alpha and beta band (7-30Hz) and a combined second order detector with each working on alpha (7-15) and beta band (15-30) separately. Since splitting into bands gave poor results it was not used in subsequent analysis. The second-order term is band-pass filtered at 7–30 Hz and pre-processed with a spatial whitening matrix $\sum^{s-\frac{1}{2}}$ ie, X= $\sum^{s-\frac{1}{2}}cov(S^{BP}\sum^{s-\frac{1}{2}})$ We use dual spectral regularizer together with it. Our aim is to simultaneously learn and select few informative spatio-temporal filters in a systematic manner. We used $ 2\times 10 $ fold cross-validation for the selection of the regularization constant.
+\section{Results}
+The result of the proposed framework applied to the motor imagery datasets are given below. The table shows classification accuracy of test data of BCI competition dataset 2a for DS regularizer. The first column in table~\ref{akb1} shows the subject label and first row shows combination of which 2 different motor imagery tasks. Were 1,2,3,4 indicates left hand, right hand, foot and tongue motor imagery respectively. For some subjects low rank (<3) weight matrix performs best and for some high rank structure is required for good prediction.
+
+\begin{table}[hbtp]
+\caption{Result for Dataset 2a}
+\vspace{0.1 in}
+\renewcommand{\arraystretch}{1.5}
+\resizebox{12cm}{!} {
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline 
+ & [1 2] &[1 3] & [1 4]&[2 3]&[2 4]&[3 4] \\ 
+\hline 
+A1 & 86.81 & 0.77 & \textbf{0.82}&1&1&1 \\ 
+\hline 
+A2& 73.61 & 0.34 &\textbf{ 0.35}&1&1&1 \\ 
+\hline 
+A3 &98.61 & 0.70 & 0.72&1&1&1  \\ 
+\hline 
+A4 & 78.47 & 0.45 & \textbf{0.51}&1&1&1 \\ 
+\hline 
+A5 & 70.18 &\textbf{ 0.21} & 0.14&1&1&1 \\ 
+\hline 
+A6 & 69.44 & 0.28 & \textbf{0.29}&1&1&1  \\ 
+\hline 
+A7 &84.72 & 0.54 & 0.51&1&1&1 \\ 
+\hline 
+A8 &99.31 & 0.55 & 0.61&1&1&1  \\ 
+\hline 
+A9 &92.36 & 0.43 & 0.42&1&1&1 \\ 
+\hline 
+\end{tabular}  }
+\label{akb1}
+\end{table}
+
+\begin{table}[hbtp]
+\caption{Comparison with CSP}
+\vspace{0.1 in}
+\renewcommand{\arraystretch}{1.5}
+\resizebox{12cm}{!} {
+\begin{tabular}{|c|c|c|c|}
+\hline 
+METHOD & SPEC-CSP &TRSPEC-CSP \\ 
+\hline 
+Subject 1 & 0.73 & \textbf{0.81}\\ 
+\hline 
+Subject 2 & 0.28 & 0.32 \\ 
+\hline 
+Subject 3 & 0.67 & 0.67  \\ 
+\hline 
+Subject 4 &\textbf{0.46} & 0.45 \\ 
+\hline 
+Subject 5 & 0.13 & 0.16  \\ 
+\hline 
+Subject 6 & \textbf{0.32} & 0.28  \\ 
+\hline 
+Subject 7 & \textbf{0.57} & 0.56 \\ 
+\hline 
+Subject 8 & 0.69 & \textbf{0.70}   \\ 
+\hline 
+Subject 9 &\textbf{0.65} & 0.59 \\ 
+\hline 
+\end{tabular}  }
+\label{akb3}
+\end{table}
+\begin{table}[hbtp]
+The Table~\ref{akb3} shows comparison of dual spectral regularizer to CSP. The DS regularizer with a low rank coefficient matrix easily outperforms CSP. For the ECoG data set DS regularizer was able to achieve 91$ \% $ accuracy which is equivalent to winner' classification accuracy.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=.2]{F:/MTECH/THESIS/templates/figure/akkb.png}
+\caption{Timing scheme of the BCI paradigm}
+\label{akkb}
+\end{figure}
+The figure~\ref{akkb} shows the learned low rank coefficient matrix W using DS regularizer. The raw CSP performance is only 67$ \% $ for this dataset. However the performance of DS regularizer is reduced if we allow further flexibility by dealing with the alpha-band (7–15 Hz) and beta-band (15–30 Hz) separately (see Fig. 5.2). The first model captures alpha activity; the second model captures beta activity. One possible explanation is over fitting. In all the topoplots given below red indicates strong positivity and violet indicates opposite of red. The figure below shows the filter captured by 7-30 Hz, 7-15 Hz, and 15-30 Hz respectively, by the detector models for left hand and right hand motor imagery in the top row. The bottom row shows spatial pattern, since the block weight matrix associated to the second-order component is symmetric; we show the eigenvalues of this matrix as spatial pattern. The DS regularizer tries to reduce rank of the matrix W as a result most of the rows and columns are switched off.
+

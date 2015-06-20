@@ -1,0 +1,272 @@
+\chapter{ Feature Extraction and Classification}
+
+\section{Introduction}
+
+The goal a BCI system is to generate a control signal based on the recorded EEG signal from scalp. There is usually a set of control signal that need to be generated based on the captured EEG signal. So we need to classify the EEG signals in order to generate a proper control signal according to thought. But the EEG signal will be highly contaminated with various artifacts like EOG, scalp movement, eye blinks etc., such artifacts are to be removed before classification. This is fulfilled in pre-processing stage, and kind of pre-processing used may vary depending on goal of the application.
+
+After pre-processing, the data is classified. Classification techniques like LDA, Gaussian Mixture Modelling (GMM) etc., may be directly applied to raw signal, But the raw signal is very high dimensional, there are too many parameters to fine tune so the direct classification usually will not work well. So additional mapping called “feature extraction”, from raw signal segments on to feature vectors. These feature vectors will be low dimensional and will easily be handled by machine learning stage. 
+\section{Common Spatial Pattern Algorithm}
+
+Using spatial filters, mental activities such as imagined movement can be extracted from the EEG signals. A 
+technique to compute these spatial filters is the common spatial patterns (CSP) algorithm~\cite{10}~\cite{11}. The features exploited by this technique in its original form are Event- related Synchronization and Desynchronization (ERD$\setminus$ERS) localized in the sensori-motor cortex, but the method is not restricted to these applications. The CSP algorithm uses labelled trials to produce a transformation that maximizes the variance for one class while minimizing the variance for the 
+other class. The difference in variance can be used to classify a fragment of EEG signals into one of two classes. 
+CSP was originally introduced in~\cite{12} and first applied to EEG in~\cite{13}. Due to its simplicity, speed and 
+relative robustness, CSP is the foremost technique for oscillatory processes, and it can be used to get a quick 
+estimate of whether the data contains information of interest or not. It was reported that CSP algorithm was used 
+more popular than others such as standard ear-reference, common average reference (CAR), small Laplacian (3 cm to set of surrounding electrodes), large Laplacian (6 cm to set of surrounding electrodes), Principal Component Analysis (PCA) and Independent Components Analysis (ICA). CSP uses log-variance features over a single non-adapted frequency range (which may have multiple peaks), and neither temporal structure (variations) in the signal is captured, nor are interactions between frequency bands. The major strength of the CSP algorithm is its adaptive spatial filter that it can capture. 
+
+Prior to calculation of the spatial filters, the reference EEG signal is filtered in an $(8-30)$ Hz band. The frequency band was chosen because it encompasses the alpha and beta frequency bands, which have been shown to be most important for movement classification. Furthermore, in a recent movement study~\cite{14}, it was shown that a broad frequency band (e.g., $8-30$ Hz) gives better classification results compared to narrow bands.  The spatial filtering projects the channels of the original signal down to a small set of (usually $4-6$ Hz) replacement channel, where the (linear) mapping is optimized such that the variance in these channels is maximally informative with respect to the prediction task. CSP can also be applied to independent components to rate their importance or for better artifact robustness. A wide range of classifiers can be used with CSP features, the most commonly used one being LDA. There exists a large collection of CSP variants and extensions, mostly to give better control over spectral filtering, including multiband CSP~\cite{15}, Spectrally Weighted CSP~\cite{16}~\cite{17}, Invariant CSP, Common Spatio-Spectral Patterns (CSSP), Common Sparse Spectral Spatial Pattern (CSSSP), Regularized CSP (RCSP), and several others. 
+
+The complexity of EEG signals has restricted a further exploring for the overfitting of CSP. The complexity mainly comes from three aspects, the non-stationarity of the signals, the unclear internal mechanisms, and the large variance of the classification results. First, the non-stationarity of the EEG signals refers to the non-stationary in the single trial and between trials. Second, in BCI application, the EEG signals are often seen as the output of a black-box. Due to the complexity of the brain, it is still not very clear how the signals are produced from a well-defined paradigm (e.g. motor imagery). Third, the classification results are of high variation. Since the discovery of ERD, it has been found that the classification accuracy over subjects is quite different. But what influences the results is still unknown. To get a thorough understanding for some methods, a large number of data sets with hundreds of trials from tens of subjects are needed, which increases the cost of investigation.
+
+The aim of CSP in a 2 class problem is to design a pair of spatial filters (i.e., spatial transforms) such that the filtered signal's variance is maximal for one class while minimal for the other (Fig.~\ref{geom}). The method used to design such spatial filters is based on the simultaneous diagonalization of two covariance matrices. This method, called the method of common spatial patterns, has been introduced to EEG analysis for detection of abnormal EEG  and was recently applied successfully to the classification of movement-related EEG.
+
+The CSP filters can be obtained from the per-class signal covariance matrices in 3 ways.
+\begin{enumerate}
+\item Geometric Approach
+\item Generalized Eigen value problem
+\item Optimization approach
+\end{enumerate}
+
+\subsection{Geometric Approach}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.7]{Figure1/csp.png}
+\caption{Geometric approach before and after CSP filtering}
+\label{geom}
+\end{figure}
+
+A more intuitive approach is a three-step procedure: 
+\begin{enumerate}
+\item Determine a whitening transform U for the average of both covariance matrices using PCA.
+\item Apply it to one of the matrices and calculate its principal components P.
+\item The spatial filter operation $W$ is to first whiten by $U$ and then transform by $P^{-1}$,
+i.e., W = $P^{-1} U$ \; so then $Z = WX$.
+\end{enumerate}
+
+The raw EEG data of a single trial $d \times N$  is represented as a matrix $X$ , where $d$ is the number of channels (i.e., recording electrodes) and $N$ is the number of samples per channel. The normalized spatial covariance of the EEG can be obtained from
+
+\begin{equation} \label{dtmf1}
+ \sum = \frac{XX^{T}}{trace \left({XX^{T}}\right)}
+\end{equation}
+
+where $T$ denotes the transpose operator and trace $\left({XX^{T}}\right)$ is the sum of the diagonal elements of $XX^{T}$. For each of the two distributions to be separated the spatial covariance is calculated by averaging over the trials of each group. i.e. per-class average covariance matrices
+\begin{equation}
+\sum^{\left( c \right)} = {\langle \sum_{t}\rangle}^{c} \; \; \; c \in \left(+1,-1 \right)
+\end{equation}
+
+The composite spatial covariance is given as
+\begin{equation}
+\sum = \sum^{\left( +1 \right)} + \sum^{\left( -1 \right)}
+\end{equation}
+
+where both $\sum^{\left( +1 \right)}$ and $\sum^{\left( -1 \right)}$ are $d\times d$ channel covariances matrices.
+$\sum$ can be factored as $\sum = U \lambda U^{T}$, where $U$ is the matrix of eigenvectors and $\lambda$  is the diagonal matrix of eigenvalues. The eigenvalues are assumed to be sorted in descending order.
+
+The whitening transformation
+\begin{equation}
+P = \sqrt{\lambda^{-1}} U^{T}
+\end{equation}
+
+Equalizes the variances in the space spanned by $U$, i.e., all eigen values of $P \sum P^{T}$ are equal to one. If $\sum^{\left( +1 \right)}$ and        $\sum^{\left( -1 \right)}$ are transformed as 
+ \begin{equation}
+ S^{\left( +1\right)} = P \Sigma^{\left( +1 \right)} P^{T} \quad and \quad S^{\left( -1\right)} = P \Sigma^{\left( -1 \right)} P^{T}
+ \end{equation}
+
+  where $S^{\left(+1\right)}$ and $S^{\left(-1\right)}$ share common eigen vectors .i.e.
+  
+  \begin{equation}
+  S^{\left( +1\right)} = B \lambda_{\left( +1\right)} B^{T}
+  \end{equation}
+  \begin{equation}
+  S^{\left( -1\right)} = B \lambda_{\left( -1\right)} B^{T}
+  \end{equation}
+  \begin{equation}
+  \lambda_{\left(+1\right)} +  \lambda_{\left(-1\right)} = I
+  \end{equation}
+        where I is the identity matrix. Since the sum of two corresponding eigenvalues is always one, the eigenvector with largest eigenvalue for $S^{\left( +1\right)}$  has the smallest eigenvalue for $S^{\left( -1\right)}$ and vice versa. This property makes the eigenvectors B useful for classification of the two distributions. The projection of whitened EEG onto the first and last eigenvectors in (i.e., the eigenvectors corresponding to the largest$\lambda_{\left(+1\right)}$ and  $\lambda_{\left(-1\right)}$ will give feature vectors that are optimal for discriminating two populations of EEG in the least squares sense.
+        
+With the projection matrix $W=\left(B^{-1} P\right)^T$, the decomposition (mapping) of a trial X is given as 
+        \begin{equation} \label{chap3:eq1}
+        Z=WX
+        \end{equation}
+                                                                                   The columns of $W^{-1}$ are the common spatial patterns and can be seen as time-invariant EEG source distribution vectors.
+             
+    The features used for classification are obtained by decomposing (filtering) the EEG according to Eqn. \ref{chap3:eq1}. For each direction of imagined movement, the variances of only a small number $'m'$ of signals most suitable for discrimination are used for the construction of the classifier. The signals $Z_P\left(1, 2.....2m\right)$ that maximize the difference of variance of left versus right motor imagery EEG are the ones that are associated with the largest eigenvalues $\lambda_{\left(+1\right)}$ and  $\lambda_{\left(-1\right)}$. These signals are the $'m'$ first and last rows of $Z$ due to the calculation of $W$.
+    \begin{equation} \label{chap3:eq1}
+    f_p=\log\left(\frac{var\left(Z_p\right)}{\sum_{i=1}^{2m} var\left(Z_p\right)   }\right)
+      \end{equation}
+       
+The feature vectors $f_p$  of left and right trials are used to calculate a linear classifier. The log-transformation serves to approximate normal distribution of the data. 
+      
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{Figure1/spatialpattern.png}
+\caption{Spatial Pattern}
+\label{SP}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{Figure1/spatialfilter.png}
+\caption{Spatial Filter}
+\label{SF}
+\end{figure}
+
+\subsection{Generalized Eigen value problem}
+
+      Given a set of $t$ trial segments $X_t\in R^{d \times N}$   , where $d$ is the number of channels and $N$ is the number of samples, per-trial channel covariance matrices $\Sigma_t=X_tX_t^T \in R^{d\times d}$, and per-class average covariance matrices $\Sigma^{\left(c\right)}={\langle \Sigma_t\rangle}^c$. The generalized eigen value problem~\cite{18}~\cite{19} is to determine the nontrivial solutions of the equation
+      
+      \begin{equation}
+      \Sigma^{\left(+1\right)}X=\lambda\left(\Sigma^{\left(+1\right)}+\Sigma^{\left(-1\right)}\right) X
+      \end{equation}
+where both $\Sigma^{\left(+1\right)}$ and $\Sigma^{\left(-1\right)}$ are $d\times d$ channel covariance matrices and $\lambda$ is a diagonal matrix of Eigen values. The values of $\lambda$ that satisfy the equation are the generalized eigenvalues and the corresponding values of $X$ are the generalized right eigenvectors. Since, $ \left(\Sigma^{\left(+1\right)}+\Sigma^{\left(-1\right)}\right) $ is non-singular, the problem could be solved by reducing it to a standard eigenvalue problem.
+    \begin{equation}
+ \left(\Sigma^{\left(+1\right)}+\Sigma^{\left(-1\right)}\right)^{-1} \Sigma^{\left(+1\right)} X=\lambda X
+    \end{equation}
+    
+    The columns of $X$ give spatial filter coefficients and rows of $X^{-1}$ gives spatial pattern. Usually we take $1-3$ pair of filter or patterns from either side as in Fig.~\ref{SF} and Fig.~\ref{SP}.
+    
+\subsection{Optimization Approach}
+
+In the optimization approach~\cite{20}~\cite{21}, given a set of $t$ trial segments $X_t$ $\in R^{d \times N}$, per-trial channel covariance matrices $\Sigma_t=X_tX_t^T \in R^{d\times d}$, and per-class average covariance matrices $\Sigma^{\left(c\right)}={\langle \Sigma_t\rangle}^c$, optimize the spatial filter $w_c$ for class $c$ as:
+
+\begin{equation}
+w_c= \max _w w^T \Sigma^{\left(c\right)}w 
+\end{equation}
+\begin{eqnarray*}
+s.t \; w^T\left(\Sigma^{\left(+1\right)}+\Sigma^{\left(-1\right)}\right)w=1
+\end{eqnarray*}
+
+  
+
+where $w^T\sum w$  gives the variance in direction w. This is a quadratically constrained quadratic program, which can be solved using Sequential Quadratic Program (SQP) method from fmincon of Matlab. 
+
+\section{Linear Discriminant Analysis}
+        
+Linear discriminant analysis (LDA) and the related Fisher's linear discriminant are methods used in statistics, pattern recognition and machine learning to find a linear combination of features which characterizes or separates two or more classes of objects or events. The resulting combination may be used as a linear classifier, or, more commonly, for dimensionality reduction before later classification. LDA is closely related to ANOVA (analysis of variance) and regression analysis, which also attempt to express one dependent variable as a linear combination of other features or measurements. In the other two methods however, the dependent variable is a numerical quantity, while for LDA it is a categorical variable (i.e. the class label). Logistic regression and probit regression are more similar to LDA, as they also explain a categorical variable. These other methods are preferable in applications where it is not reasonable to assume that the independent variables are normally distributed, which is a fundamental assumption of the LDA method. Rather than the ANOVA categorical independent variables and a continuous dependent variable, discriminant analysis has continuous independent variables and a categorical dependent variable. 
+
+LDA is also closely related to principal component analysis (PCA) and factor analysis in that they both look for linear combinations of variables which best explain the data. LDA explicitly attempts to model the difference between the classes of data. PCA on the other hand does not take into account any difference in class, and factor analysis builds the feature combinations based on differences rather than similarities. Discriminant analysis is also different from factor analysis in that it is not an interdependence technique: a distinction between independent variables and dependent variables (also called criterion variables) must be made. LDA works when the measurements made on independent variables for each observation are continuous quantities. When dealing with categorical independent variables, the equivalent technique is discriminant correspondence analysis~\cite{22}~\cite{23}.
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{Figure1/LDA1.png}
+\caption{From the 3D scatter plots it is clear that LDA outperforms PCA in terms of class discrimination n this is one example where the discriminatory information is not aligned with the direction of maximum variance}
+\label{lad1}
+\end{figure}
+The terms Fisher's linear discriminant and LDA are often used interchangeably, although Fisher's original article actually describes a slightly different discriminant, which does not make some of the assumptions of LDA such as normally distributed classes or equal class covariances. There are many possible techniques for classification of data. Principal Component Analysis (PCA) and Linear Discriminant Analysis (LDA) are two commonly used techniques for data classification and dimensionality reduction. Linear Discriminant Analysis easily handles the case where the within-class frequencies are unequal and their performances have been examined on randomly generated test data. This method maximizes the ratio of between-class variance to the within-class variance in any particular data set thereby guaranteeing maximal separability. The use of Linear Discriminant Analysis for data classification is applied to classification problem in speech recognition. The prime difference between LDA and PCA is that PCA does more of feature classification and LDA does data classification. In PCA, the shape and location of the original data sets changes when transformed to a different space whereas LDA doesn’t change the location but only tries to provide more class separability and draw a decision region between the given classes. This method also helps to better understand the distribution of the feature data.
+A comparison of PCA and LDA in three dimensional space is shown in Fig.~\ref{lad1}. 
+\subsection{Mathematical Operation}
+Assume we have $m$-dimensional samples $\lbrace x_1, x_2,…, x_N\rbrace $, $N1$ of which belong to $w_1$ and $N2$ belong to $w_2$. We seek to obtain a scalar $y$ by projecting the samples $x$ onto a line(C-1 space, C = 2). 
+\begin{equation}
+y=w^Tx, \quad
+x=\left(\begin{array}{c} x_1\\ .\\ .\\ x_m \end{array}\right) \quad
+w=\left(\begin{array}{c} w_1\\ .\\ .\\ w_m \end{array}\right)
+\end{equation}
+
+Of all the possible lines we would like to select the one that maximizes the separability of the scalars. Let us consider  $\mu_1$ and $\mu_2$ are the means of the two classes.
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{Figure1/LDA2.png}
+\caption{The two classes are not well separated when projected onto this line}
+\label{lad2}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{Figure1/LDA3.png}
+\caption{This line succeeded in separating the two classes and in the mean time reducing the  dimensionality of our problem from two features $(x1,x2)$ to only a scalar value $y$.}
+\label{lad3}
+\end{figure}
+
+In order to find a good projection vector, we need to define a measure of separation between the projections. An example of projection using a bad projection vector is shown in Fig.~\ref{lad2}, and using a good projection vector is shown in Fig.~\ref{lad3}.
+
+\begin{equation}
+\tilde{\mu_1}= \frac{1}{N}\sum_{y\in w_i}y=w^T\mu_i
+\end{equation}
+
+$\tilde{\mu_1}$ represents the mean vector of each class in $y$ feature space. We could then choose the distance between the projected means as our objective function.
+
+\begin{equation}
+J\left(w\right)=\mid\tilde{\mu_1}-\tilde{\mu_2}\mid=\mid w^T\mu_1- w^T\mu_2\mid=\mid w^T\left(\mu_1-\mu_2\right)\mid
+\end{equation}
+However, the distance between the projected means is not a very good measure since it does not take into account the standard deviation within the classes.
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{Figure1/LDA4.png}
+\caption{Befor Linear Discrimination}
+\label{lad4}
+\end{figure}
+
+
+The solution proposed by Fisher is to maximize a function that represents the difference between the means, normalized by a measure of the within-class variability, or the so-called 'scatter'. An equivalent of the variance such as scatter is calculated for each of the classes. Fig.~\ref{lad4} shows before linear discrimination of two classes and Fig.~\ref{lad5} shows after linear discrimination of two classes.
+         
+For each class we define the scatter, an equivalent of the variance and is given by
+
+\begin{equation}
+\tilde{S_l^2}= \sum_{y\in w_i}\left( y-\mu_i\right)^2
+\end{equation}
+
+where $\tilde{S_l^2}$ measures the variability within class $w_i$ after projecting it on the $y$-space.
+Thus  $\tilde{S_1^2}+\tilde{S_2^2}$ measures the variability within the two classes at hand after projection, hence it is called within-class scatter of the projected samples. 
+The Fisher linear discriminant is defined as the linear function $w^T x$ that maximizes the criterion function:
+\begin{equation}
+J\left(w\right)=\frac{{\mid\tilde{\mu_1}-\tilde{\mu_2}\mid}^2}{\tilde{S_1^2}+\tilde{S_2^2}}
+\end{equation}
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{Figure1/LDA5.png}
+\caption{After Linear Discrimination.}
+\label{lad5}
+\end{figure}
+Therefore, looking for a projection where examples from the same class are projected very close to each other and, at the same time, the projected means are as farther apart as possible.
+
+In order to find the optimum projection $w*$, express $J(w)$ as an explicit function of $w$. The scatter matrices are proportional to the covariance matrices and $S_B$ is the "between classes scatter matrix" and $S_W$ is the "within classes scatter matrix". A measure of the scatter in multivariate feature space x which are denoted as scatter matrices is defined as;                      
+
+\begin{equation}
+S_i=\sum_{x\in w_i} \left(x-\mu_i\right){\left(x-\mu_i\right)}^T
+\end{equation}
+\begin{equation}
+S_w=S_1+S_2
+\end{equation}
+\begin{equation}
+S_b=\left(\mu_1-\mu_2\right){\left(\mu_1-\mu_2\right)}^T
+\end{equation}
+where $S_i$ is the covariance matrix of class $w_i$, and finally express the Fisher criterion in terms of $S_W$ and $S_B$ as: 
+
+\begin{equation}
+J\left(w\right)=\frac{{\mid\tilde{\mu_1}-\tilde{\mu_2}\mid}^2}{\tilde{S_1^2}+\tilde{S_2^2}}=\frac{w^T S_B w}{w^T S_W w}
+\end{equation}
+Hence $J(w)$ is a measure of the difference between class means (encoded in the between-class scatter matrix) normalized by a measure of the within-class scatter matrix.
+
+ After differentiation and equating to zero, to find the maximum of $J(w)$,
+\begin{equation}
+S_W^{-1}S_Bw-J\left(w\right)w=0
+\end{equation}
+
+On solving the generalized eigen value problem, we get
+\begin{eqnarray*}
+S_W^{-1}S_Bw=\lambda w \quad where \quad\lambda=J\left(w\right)= scalar \quad  
+\end{eqnarray*}
+yields
+\begin{equation}
+w^\ast=arg\max_w \left(\frac{w^T S_B w}{w^T S_W w}\right)=S_W^{-1}\left(\mu_1-\mu_2\right)
+\end{equation}
+This is known as Fisher’s Linear Discriminant, although it is not a discriminant but rather a specific choice of direction for the projection of the data down to one dimension.
+
+The problem of maximizing $J$ can be transformed into the following constrained optimization problem as
+\begin{equation}
+\min_w -\frac{1}{2}w^T S_B w \quad
+s.t \quad w^TS_Ww=1
+\end{equation}
+\subsection{Limitations of LDA }
+\begin{itemize}
+\item LDA produces at most $C-1$ feature projections 
+–   If the classification error estimates establish that more features are needed, some other method must be employed to provide those additional features 
+\item LDA is a parametric method (it assumes unimodal Gaussian likelihoods) 
+–  If the distributions are significantly non-Gaussian, the LDA projections may not preserve complex structure in the data needed for classification.  \item LDA will also fail if discriminatory information is not in the mean but in the variance of the data
+\end{itemize}
+ 
+

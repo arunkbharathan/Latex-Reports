@@ -1,0 +1,5 @@
+\chapter{Conclusion}
+
+The framework used in this thesis can be applied to different types of regularizers as well as the predictor model can be changed with other predictor models like hinge loss, which inturn induces sparsity. The test trials can be classified by taking sign of the sum of inner product between $W$ and covariance matrix $S$ and bias term. This makes it easier to use in online systems, with low rank structure this can be done with less computation. Since the predictor output gives amount of surprise or entropy for each input, this can be used to implement multiclass variant of this in one step. We may also apply the method to other multiple-sensor recordings e.g., fMRI signals or computer vision problems, regression problems etc.
+
+The key idea in our approach is to focus on directly predicting the intention of a user. This enabled us to approach decoding and learning in a unified and systematic manner and to avoid intermediate steps. Note that this idea applies not only to other BCI paradigms including invasive BCIs but also to general discriminative neurophysiological paradigms even beyond EEG.

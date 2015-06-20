@@ -1,0 +1,17 @@
+\frametitle{RLS Code}
+\begin{verbatim}
+N=7;
+W=eps*ones(1,N);
+P=eye(7)*1000;
+lambda= 0.95;
+tic
+for i=N:length(x)
+    u=x(i:-1:i-(N-1));
+    y(i)=W*u;
+    e(i)=d(i)-y(i);
+    k=(lambda+u'*P*u)\P*u;
+    W=W+k'*e(i);
+    P=(1/lambda)*(P-k*u'*P);
+    MSE(i-6)=e(i)^2;
+end
+\end{verbatim}

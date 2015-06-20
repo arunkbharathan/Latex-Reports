@@ -1,0 +1,118 @@
+% -*- Mode:TeX -*- 
+
+%% IMPORTANT: The official thesis specifications are available at:
+%%            http://libraries.mit.edu/archives/thesis-specs/
+%%
+%%            Please verify your thesis' formatting and copyright
+%%            assignment before submission.  If you notice any
+%%            discrepancies between these templates and the 
+%%            MIT Libraries' specs, please let us know
+%%            by e-mailing thesis@mit.edu
+
+%% The documentclass options along with the pagestyle can be used to generate
+%% a technical report, a draft copy, or a regular thesis.  You may need to
+%% re-specify the pagestyle after you \include  cover.tex.  For more
+%% information, see the first few lines of mitthesis.cls. 
+
+%\documentclass[12pt,vi,twoside]{mitthesis}
+%%
+%%  If you want your thesis copyright to you instead of MIT, use the
+%%  ``vi'' option, as above.
+%%
+%\documentclass[12pt,twoside,leftblank]{mitthesis}
+%%
+%% If you want blank pages before new chapters to be labelled ``This
+%% Page Intentionally Left Blank'', use the ``leftblank'' option, as
+%% above. 
+
+\documentclass[12pt,oneside]{mitthesis}
+\usepackage{lgrind}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{graphics}
+\usepackage{algorithm}
+\usepackage{float}
+%\usepackage{lipsum}
+%\restylefloat{table}
+\usepackage{dblfloatfix}
+\usepackage{algorithmic}
+%\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{fancyheadings}
+%\usepackage[titletoc]{appendix}
+\usepackage
+[
+        a4paper,% other options: a3paper, a5paper, etc
+        left=30mm,
+        right=20mm,
+        top=25mm,
+        bottom=25mm,
+        % use vmargin=2cm to make vertical margins equal to 2cm.
+        % us  hmargin=3cm to make horizontal margins equal to 3cm.
+        % use margin=3cm to make all margins  equal to 3cm.
+]
+{geometry}
+\pagestyle{fancy}
+\fancyhf{}% Clear header/footer
+\fancyhead[L]{\footnotesize{One Step Feature Extraction and Classification with Regularization for BCI}}
+\fancyfoot[L]{\footnotesize{Dept. of Electronics and Communication Engineering, N.S.S. College of Engineering, Palakkad}}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}% Default \headrulewidth is 0.4pt
+\renewcommand{\footrulewidth}{0.4pt}% Default \footrulewidth is 0pt	
+\usepackage[cmex10]{amsmath}
+\usepackage{array}                                                                       
+\include {amsthm}
+\newtheorem{defn}{Definition}[section]
+\pagestyle{plain}
+%% This bit allows you to either specify only the files which you wish to
+%% process, or `all' to process all files which you \include.
+%% Krishna Sethuraman (1990).
+%\typein [\files]{`all':}
+\def\all{all}
+%\ifx\files\all \typeout{Including all files.} \else \typeout{Including only \files.} \includeonly{\files} \fi
+
+\begin{document}
+\pagenumbering{roman}
+\include{cover}
+% Some departments (e.g. 5) require an additional signature page.  See
+% signature.tex for more information and uncomment the following line if
+% applicable.
+% \include{signature}
+
+\pagestyle{plain}
+\include{contents}
+%\pagestyle{myheadings}
+\pagestyle{fancy}
+%\thispagestyle{plain}
+\pagenumbering{arabic}
+\include{chap1}
+\include{chap2}
+\include{chap3}
+\include{chap4}
+\include{chap5}
+\include{conclusion}
+%\cleardoublepage
+%\phantomsection
+%\appendix
+%\noappendicestocpagenum
+%\addappheadtotoc
+%\addcontentsline{toc}{part}{\appendixname}
+%\include{app}
+%\addcontentsline{toc}{chapter}{Appendices}
+%\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
+%\begin{appendices}
+  %\include{appa}
+  %\include{appb}
+  %\include{appc}
+  %\include{appd}
+%\end{appendices}
+%\input{appa}
+%\input{appb}
+%\input{appc}
+%\input{appd}
+\cleardoublepage
+%\phantomsection
+\addcontentsline{toc}{chapter}{Bibliography}
+\include{biblio}
+\end{document}
+

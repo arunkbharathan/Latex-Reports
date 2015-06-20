@@ -1,0 +1,65 @@
+\contentsline {chapter}{\hbox to\@tempdima {\hfil }Acknowledgement}{iv}
+\contentsline {chapter}{\hbox to\@tempdima {\hfil }Abstract}{v}
+\contentsline {chapter}{\hbox to\@tempdima {\hfil }Contents}{vi}
+\contentsline {chapter}{\hbox to\@tempdima {\hfil }List of Figures}{ix}
+\contentsline {chapter}{\hbox to\@tempdima {\hfil }List of Tables}{x}
+\contentsline {chapter}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {1.1}Background}{1}
+\contentsline {section}{\numberline {1.2}Motivation and Problem Statement}{3}
+\contentsline {section}{\numberline {1.3}Aim and Objectives}{3}
+\contentsline {section}{\numberline {1.4}Thesis Outline}{4}
+\contentsline {chapter}{\numberline {2}Introduction To Brain Computer Interfaces}{6}
+\contentsline {section}{\numberline {2.1}Introduction}{6}
+\contentsline {section}{\numberline {2.2}Overview of Brain Computer Interfaces}{7}
+\contentsline {section}{\numberline {2.3}Types of BCIs}{8}
+\contentsline {section}{\numberline {2.4}Signal Acquisition-Neuro imaging techniques}{9}
+\contentsline {subsection}{\numberline {2.4.1}Electroencephalogram}{10}
+\contentsline {subsection}{\numberline {2.4.2}Electrocorticogram}{12}
+\contentsline {subsection}{\numberline {2.4.3}Magnetoencephalography (MEG)}{12}
+\contentsline {subsection}{\numberline {2.4.4}Functional Magnetic Resonance Imaging (fMRI)}{13}
+\contentsline {subsection}{\numberline {2.4.5}Near Infrared Spectroscopy (NIRS)}{13}
+\contentsline {section}{\numberline {2.5}Control Signal Types in BCIs}{13}
+\contentsline {subsection}{\numberline {2.5.1}Visual Evoked Potentials (VEPs)}{14}
+\contentsline {subsection}{\numberline {2.5.2}Slow Cortical Potentials (SCPs)}{14}
+\contentsline {subsection}{\numberline {2.5.3}P300 Evoked Potentials}{15}
+\contentsline {subsection}{\numberline {2.5.4}Sensorimotor Rhythms (mu and beta rhythms)}{16}
+\contentsline {section}{\numberline {2.6}Features Extraction and Selection}{16}
+\contentsline {section}{\numberline {2.7}Artifacts in BCIs}{18}
+\contentsline {section}{\numberline {2.8}Classification Algorithms}{19}
+\contentsline {section}{\numberline {2.9}Applications}{19}
+\contentsline {subsection}{\numberline {2.9.1}Spelling Devices}{20}
+\contentsline {subsection}{\numberline {2.9.2}Environment Control}{20}
+\contentsline {subsection}{\numberline {2.9.3}Wheelchair Control}{20}
+\contentsline {subsection}{\numberline {2.9.4}Neuromotor Prostheses}{20}
+\contentsline {subsection}{\numberline {2.9.5}Gaming and Virtual Reality}{21}
+\contentsline {chapter}{\numberline {3} Feature Extraction and Classification}{22}
+\contentsline {section}{\numberline {3.1}Introduction}{22}
+\contentsline {section}{\numberline {3.2}Common Spatial Pattern Algorithm}{22}
+\contentsline {subsection}{\numberline {3.2.1}Geometric Approach}{24}
+\contentsline {subsection}{\numberline {3.2.2}Generalized Eigen value problem}{26}
+\contentsline {subsection}{\numberline {3.2.3}Optimization Approach}{28}
+\contentsline {section}{\numberline {3.3}Linear Discriminant Analysis}{28}
+\contentsline {subsection}{\numberline {3.3.1}Mathematical Operation}{30}
+\contentsline {subsection}{\numberline {3.3.2}Limitations of LDA }{34}
+\contentsline {chapter}{\numberline {4}A One Step Feature Extraction and Classification with Regularization for BCI}{35}
+\contentsline {section}{\numberline {4.1}Introduction}{35}
+\contentsline {section}{\numberline {4.2}Signal Analysis Framework}{35}
+\contentsline {subsection}{\numberline {4.2.1}Discriminative Learning}{36}
+\contentsline {subsubsection}{Logistic Model}{37}
+\contentsline {subsection}{\numberline {4.2.2}Detector Function }{39}
+\contentsline {subsection}{\numberline {4.2.3}Regularization}{40}
+\contentsline {subsection}{\numberline {4.2.4}Discussion on Discriminative Approach}{40}
+\contentsline {subsubsection}{Second Order Feature based BCI }{41}
+\contentsline {section}{\numberline {4.3}Implementation}{42}
+\contentsline {chapter}{\numberline {5}Results and Discussion}{44}
+\contentsline {section}{\numberline {5.1}Introduction}{44}
+\contentsline {section}{\numberline {5.2}Dataset Description}{44}
+\contentsline {subsection}{\numberline {5.2.1}BCI Competition IV Dataset 4a}{44}
+\contentsline {subsection}{\numberline {5.2.2}BCI Competition III Dataset 1}{45}
+\contentsline {section}{\numberline {5.3}Signal Pre-processing and Predictor Model}{46}
+\contentsline {section}{\numberline {5.4}Results}{47}
+\contentsline {section}{\numberline {5.5}CSP with Tikhonov Regularization}{50}
+\contentsline {section}{\numberline {5.6}Novelty in our work}{50}
+\contentsline {section}{\numberline {5.7}Conclusion}{52}
+\contentsline {chapter}{\numberline {6}Conclusion}{54}
+\contentsline {chapter}{Bibliography}{55}

@@ -1,0 +1,162 @@
+\chapter{A One Step Feature Extraction and Classification with Regularization for BCI}
+\section{Introduction}
+A regularized discriminative framework for EEG analysis is a framework for analysis of electroencephalography (EEG) signal that unifies various tasks such as feature extraction, feature selection, feature combination, and feature classification~\cite{14}. These tasks are often independently tackled under a regularized empirical risk minimization problem. The features are automatically learned, selected and combined through a convex optimization problem. 
+
+The framework is applied to two typical BCI problems, namely the ECoG dataset and the prediction of limb movement based on motor imagery data. In both datasets, the proposed approach shows competitive performance against conventional methods, while at the same time the results are easily accessible to neurophysiological interpretation.
+
+\section{Signal Analysis Framework}
+In this section a discriminative learning framework for BCI is presented. The framework consists of three components. The first one is a probabilistic predictor model that is used for both decoding the intention of a user and learning the predictor model from a collection of trials. The second component is the design of a detector function. The last component is how to appropriately control the complexity of the detector function. These three issues are presented under Discriminative learning, Detector function, and Regularization sections, respectively.
+\subsection{Discriminative Learning}
+In any BCI system, the goal of signal analysis is to construct a function that predicts the intention of a user from his/her brain signal. In our discriminative approach we are interested in the whole function from the brain signal to the probability distribution over possible user intention, which we call a predictor. When we deal with this type of probabilistic predictor we are facing two tasks. First, how to decode the intention of a user given the brain signal and the predictor. Second, how to learn the predictor from a collection of labelled examples. The answers to these questions are derived naturally from probability theory and statistics.
+
+Let $X$ $\in \chi$  be the input brain signal and let $q(Y|X)$ be the predictor, which assigns probabilities to the user's command $Y$ $\in y$ given the brain signal $X$. The task of decoding is to find the most likely command $\hat{y}$ given the input $X$ and the predictor $q$ as follows:
+\begin{equation}
+\tilde{y}=arg\max_{y\in Y} q\left(Y=y\mid X\right)
+\end{equation}
+
+The task of learning is to find a predictor from a suitably chosen collection of candidates, which we call a 
+model, and we assume that a model is parametrized by a parameter vector $\theta \in \Theta$. The predictor 
+specified by $\theta$ is denote as $q_\theta$; thus the model is a set $\lbrace q_\theta : C \in \Theta
+\rbrace $. In order to say how a predictor $q_\theta$ compares to another predictor $q^{'}_{\theta}$, it is 
+necessary to define a loss function. We can consider the probability that the predictor assigns to each 
+possible user intention $y$ as the pay off the predictor can obtain if the actual intention coincides with 
+the prediction; the predictor can choose its strategy between equally distributing the probability mass over 
+all the possible outcomes and concentrating it on a single output that is based on the brain signal $X$. This 
+pay off is commonly measured in the logarithmic scale. The loss function is thus defined as the negative 
+logarithmic pay off (or the Shannon information content in information theory) as follows:
+
+\begin{equation}
+\ell_L\left(\left(X,y\right),\theta\right)=-\log q_\theta\left(Y=y\mid X\right)
+\end{equation}
+
+where, $X$ is the brain signal and $y$ is the true intention of the user. Thus the loss is smaller if the predictor predicts the actual intention of the user with high confidence. Suppose we are given a collection of input signal $X_i$ and true intention $y_i$, which we denote $\lbrace X_i,y_i\rbrace_{i=1}^n$. It is reasonable to choose the parameter $\theta$ that minimizes the empirical average of losses 
+
+\begin{equation}
+L_n\left(\theta\right)=\frac{1}{n}\sum_{i=1}^n\ell\left(\left(X_i,y_i\right),\theta\right)
+\end{equation}
+
+However, often the complexity of the class of predictors $q_\theta$  is very large and the minimization of $L_n (\theta)$ leads to over fitting due to small sample size. Therefore, we learn the parameter $\theta$ by solving the following constrained minimization problem: 
+\begin{equation}\label{eq44}
+\min_{\theta\in\emptyset}L_n\left(\theta\right)\; s.t\quad \Omega\left(\theta\right)\leq C
+\end{equation}
+The second term $\Omega (\theta)$ is called the regularizer and it measures the complexity of the parameter configuration $\theta$. $C$ is a hyper-parameter that controls the complexity of the model and is selected by cross validation. A complexity function induces a nested sequence of subsets                   $\Theta_C :=\lbrace \theta \in \Theta: \Omega (\theta) \leq C\rbrace $, which is parameterized by the bound C on the complexity; i.e., $C1< C2 <C3 < ...$ implies $\Theta_{C1}<\Theta_{C2}<\Theta_{C3}...$ and vice versa. Therefore we can consider a sequence of predictors that we obtain through the learning framework at monotonically increasing level of complexity.
+               
+If we suppose that the training examples $\lbrace X_i,y_i\rbrace_{i=1}^n$ are sampled independently and identically from some probability distribution $p(X, Y)$, the above function $L_n(\theta)$ can be considered as the empirical version of the following function.
+ 
+\begin{equation}
+L\left(\theta\right)=D\left(p\left(Y\mid X\right)\parallel q_\theta\left(Y\mid X\right)\right) + H\left(p\left(Y\mid X\right)\right)
+\end{equation}
+
+where $D(p \parallel q)$ is the Kullback-Leibler divergence between two probability distributions $p$ and $q$; the second term is the conditional entropy of $Y$ given $X$ and is a constant that does not depend on the model parameter $\theta$.
+
+\subsubsection{Logistic Model}
+
+The logistic regression~\cite{24} model is a popular model in a binary decision setting. The logistic model assumes the user command $Y$ to be either one of the two possibilities; e.g., $Y= -1$ and $Y= +1$ for left and right-hand movement, respectively. The logistic predictor $q_\theta$ is defined through a latent function $f_\theta$; we define a real valued function $f_\theta$ which outputs a positive number if $Y= +1$ is more likely than $Y= -1$ and vice versa. Then a logistic function  u(z)=1/(1+exp(-z)) is applied to the output $f_\theta(X)$ to convert it into the probability of $Y= +1$ given $X$; similarly applying the logistic function to  $- f(X)$ gives the probability of $Y= -1$ given $X$. Thus we have the following expression for the predictor:
+\begin{equation}\label{eq46}
+q_\theta\left(Y=y\mid X\right)=\frac{1}{1+\exp{\left(-y f_\theta\left(X\right)\right)}}\quad \left(y\in\lbrace 1,-1 \rbrace\right)
+\end{equation}
+In fact, under the predictor $q_\theta$  defined above, the log likelihood ratio of $Y= +1$ to $Y= -1$ given $X$ is precisely the latent function value $f_\theta(X)$ as follows.
+\begin{equation} \label{chap4:6}
+\log\frac{q_\theta\left(Y=+1\mid X\right)}{q_\theta\left(Y=-1\mid X\right)}=f_\theta\left(X\right)
+\end{equation}
+The loss function for the logistic model is called the logistic loss (shown in Fig.~\ref{logit})and can be written as follows:
+\begin{equation} \label{eq48}
+\ell_L\left(\left(X,y\right),\theta\right)=\log\left(1+\exp{\left(-y f_\theta\left(X\right)\right)}\right)
+\end{equation} 
+which is obtained by taking the negative logarithm of Eqn. \ref{chap4:6}. As shown above, it is often a useful strategy to construct a model as a combination of a class of functions that converts the input signal into a scalar value and a link function that converts this value into the probability of the command $Y$. The function $f_\theta$  is called a detector because in the BCI context it captures some characteristic spatio-temporal activity in the brain; a class of functions parametrized by $\theta \in \Theta$ is called a detector model.     
+\begin{figure}
+\centering
+\includegraphics[scale=.7]{Figure1/logit.png}
+\caption{Logistic Function}
+\label{logit}
+\end{figure}
+\subsection{Detector Function }
+We use the following linear detector function:
+\begin{equation}
+f_\theta\left(X\right)=\langle W,X\rangle+b
+\end{equation}
+$\theta≔(W,b)$ is a matrix of some appropriate size and $b \in R$ is a bias term. 
+$\langle W, X \rangle =\sum_{ij} W(i,j) X(i,j)$ is the inner product between two matrices $X$ and $W$. $W(i, j)$ denotes the $(i,j)_{th}$  element of a matrix $W$. 
+
+$X\in S^{C}_+$ is covariance of appropriately filtered EEG signal, i.e., $X$ and $W$ are both $C \times C$ matrices. The detector is called the second-order detector in this case. This model can be used to detect slow change in the cortical potential also, in that case we use first order feature.
+
+Since we are interested in the second-order information such as variance and covariance, we set $X$ as a block diagonal concatenation of these terms as in Eqn.~\ref{eq22}:
+
+\begin{equation}\label{eq22}
+\left(\begin{array}{ccc} {\frac{1}{\eta_{\left(1\right)}}\Xi^{\left(1\right)}} &   &  \\   & {\frac{1}{\eta_{\left(2\right)}}\Xi^{\left(2\right)}} &  \\   &   & {\frac{1}{\eta_{\left(k\right)}}\Xi^{\left(k\right)}} \end{array}\right)
+\end{equation}
+
+where $\Xi^{(1)}$ is the first-order term ($X$ in the above first-order model) and $\Xi^{(k)}= cov(X^k)$ is the covariance matrix of a short segment of band-pass filtered EEG $X(k)$ for $k=1,.,. K$. Here we consider $K$ second-order terms that are filtered by different (possibly overlapped) band-pass filters. We call $X$ the augmented input matrix and the corresponding $W$ the augmented weight matrix. The normalization factor $\eta*$ is introduced in order to prevent biasing the selection of terms with large power or large size; it is defined as the square root of the total variance of each block element, i.e., 
+\begin{equation}
+\eta_\ast=\sqrt{\sum_{k}var\left(\Xi\left(k\right)\right)}
+\end{equation}
+
+Where $k \in \lbrace 1,2,.,K \rbrace$. This choice is motivated by the common practice in the $\ell_1$-regularization  to standardize each feature to unit variance. In fact, when all the block diagonal matrices are $1\times1$, the dual spectral (DS) regularization reduces to $\ell_1$ regularization (lasso) and the above $\eta*$ reduces to the standard deviation of each feature. It can be shown that when we learn the augmented weight matrix $W$ under suitable regularization, the weight matrix turns out to have the same block diagonal structure as the input $X$. This model is called the second-order detector. This model can be used to detect oscillatory features such as event-related desynchronization which is useful in detecting real or imagined movement. In these tasks it is known that both the slow change in the cortical potential and the event related desynchronization are useful features to predict the movement. We combine these features in the block diagonal form.
+
+\subsection{Regularization}
+
+In this section we present Dual Spectral regularizer. The DS regularizer is defined as the linear sum of singular-values of the weight matrix $W$, which is called the DS norm~\cite{25}~\cite{26}.
+\begin{equation}
+\Omega_{DS}\left(\theta\right)=\sum_{j=1}^r \sigma_j\left(W\right)
+\end{equation}
+
+where $\sigma_j(W)$ is the $j^{th}$ singular value of the weight matrix $W$ and $r$ is the rank of $W$. The DS regularization can be considered as another generalization of the $\ell_1$-regularization; it induces sparsity in the singular-value spectrum of the weight matrix $W$. That is, it induces low-rank matrix $W$. Similarly to group-lasso, when a singular component is switched off, all the degrees of freedom associated to that component (i.e., left and right singular vectors) are simultaneously switched off. However in contrast to group-lasso regularizer, there is no notion of any group a priori. The DS regularization automatically tunes the feature detectors as well as the rank of $W$.
+ 
+In machine learning literature, the low-rank enforcing property of the dual spectral norm is well known and has been used in applications such as collaborative filtering , multi-class classification multi-output prediction. The DS regularizer induces the positive semidefinite cone constraint. In fact, mathematically these cones are understood as generalizations of the positive-orthant cone induced by the $\ell_1$ (lasso) regularizer.
+ 
+\subsection{Discussion on  Discriminative Approach}
+
+Major difference in various discriminative approaches arises in the parameterization of the detector function $f_\theta (X)$. Detector function used here is discussed below.
+
+\subsubsection{Second Order Feature based BCI }
+
+One of the most successful approach in motor-imagery based BCI is common spatial pattern (CSP). A commonly used form of CSP based detector model can be written as in Eqn.~\ref{CSPLDA}.
+\begin{equation}
+f_\theta\left(X\right)=\sum_{j=1}^J \beta_j\log\left(w_j^T X^T B_j B_j^T X w_j\right)+\beta_0
+\end{equation}\label{CSPLDA}
+
+where $X \in R^{T\times C}$ is a short segment of multi-channel EEG measurement with $C$ channels and $T$ sampled time-points; $B_j \in R^{T\times T}$ are temporal filters, $w_j \in R^C$ are spatial filters, $\lbrace\beta_j\rbrace_{j=1}^J$ are weighting coefficients of the $J$ features, and $\beta_0$ is a bias term. CSP is a dimensionality reduction method based on a generalized eigen value problem. In the conventional CSP based approach, thus the classifier is trained in three steps. First, the temporal filter coefficients $B_j$ is chosen a priori or based on some heuristics. Second, the spatial filter is obtained from solving the generalized eigen value. DS regularization with following detector model is assumed: 
+\begin{equation}
+f_\theta\left(X\right)=\langle W,X^T X\rangle+b
+\end{equation}
+The above is obtained from CSP equation by omitting the logarithm, and the temporal filter coefficient $B_j$ (assumed to be constant), and denoting $W=\sum_{j=1}^j \beta_j w_j w_j^T$. It is demonstrated that using the DS regularization, good classification performance is obtained with only a few spatial filters $w_j$. In DS regularization the rank may be chosen as $4$ or $5$ which is typically the same as with CSP approach. The common practice in CSP is taking $3$ filters from right end and left end of the spatial filter matrix and it is not optimal.
+  
+Models that learn good spatial filter, temporal filter and LDA weights all in one optimization problem were proposed but they suffer from local minima problem due to non-smooth function. Another method which enforces rank constraint was also proposed, with Frobenius matrix regularizer and hinge loss function.
+
+ \section{Implementation}
+
+The logit of the posterior class probability can be modelled with a linear function as:
+  \begin{equation}
+  \log{\frac{P\left(y=+1\mid X\right)}{P\left(y=-1\mid X\right)}}=Tr[W^T X]+b
+  \end{equation}
+Negative log-likelihood of Eq \ref{eq48} is minimized with a dual spectral norm penalization term, which is written as follows:
+\begin{equation}\label{eq416}
+\min_{W\in R^{R\times C},b\in R, z\in R^n} \sum_{i=1}^n \ell_{LR}\left(z_i\right)+\lambda \Vert W\Vert_1,
+\end{equation}
+\begin{eqnarray*}
+ \quad   y_i\left(Tr[W^T X_i]+b\right)=z_i, \quad
+ i=1,....,n
+\end{eqnarray*}
+
+
+where $z_i (i = 1, . . . , n)$ are called the latent variables, $\lambda$ is the regularization constant, and  $Tr[\bullet]$ denotes the trace. Here the logistic loss $\ell_{LR}$ and the spectral $\ell_1$- norm of a matrix $\Vert W\Vert_1$ are defined as follows:
+
+\begin{equation}
+\ell_{LR}\left(z\right)=\log\left(1+\exp\left(-z\right)\right)
+\end{equation}
+\begin{equation}
+\Vert W\Vert_1 = \sum_{c=1}^r \sigma[W]
+\end{equation}
+
+Using two auxiliary positive semidefinite matrix $Q_1 \in S_+^R$ and $Q_2 \in S_+^C$, we can rewrite the spectral $\ell_1$-norm, which is convex but a non-differentiable function, with linear matrix inequality (LMI), as follows:
+\begin{equation}
+\min_{W\in R^{R\times C},b\in R, z\in R^n, Q_1\in S_+^C,Q_2\in S_+^R} \sum_{i=1}^n \ell_{LR}\left(z_i\right)+\lambda \left(Tr[Q_1]+Tr[Q_2]\right), \quad i=1,....,n
+\end{equation}
+\begin{eqnarray*}
+\left(\begin{array}{cc} \mathrm{Q_1} & -\frac{1}{2}W\\ -\frac{\mathrm{1}}{2}W^T & \mathrm{Q_2} \end{array}\right) \succeq 0
+\end{eqnarray*}  
+
+
+The transformation has been done because to change non-smooth convex dual spectral norm to a smooth convex optimization problem~\cite{27}. By minimizing some alternate variables, the rank of $W$ is minimized indirectly,thus minimizing our objective function , where $S_+^C$, denotes symmetric positive semidefinite matrices. In our case since $W$ is symmetric $Q_1= Q_2$, and the minimum is attained at $\frac{1}{2} USU^T$, ($\frac{1}{2}$ is for notational convenience), which specifies its convexity and on finding the determinant of above LMI, we get $(U+W) \succeq 0$ and $(U-W) \succeq 0$,i.e, the matrix $U+W$ and $U-W$ are symmetric positive semidefinite~\cite{21}.
+
+We can implement this primal problem in package like CVX~\cite{28} which is much slower. The alternate is specialized package which optimize the dual of the problem like DAL~\cite{29} package and packages which implement ADMM (alternating direction method of multipliers).
